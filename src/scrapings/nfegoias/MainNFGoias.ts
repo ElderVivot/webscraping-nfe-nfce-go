@@ -145,4 +145,4 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
     if (browser.isConnected()) await browser.close()
 }
 
-MainNFGoias().then(_ => console.log(_))
+// MainNFGoias().then(_ => console.log(_))

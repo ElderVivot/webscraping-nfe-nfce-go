@@ -73,4 +73,4 @@ export async function OrganizeCertificates (directory: string, directoryToCopy: 
     }
 }
 
-OrganizeCertificates('C:/_temp/certificados/analisar', 'C:/_temp/certificados/teste').then(_ => console.log(_))
+// OrganizeCertificates('C:/_temp/certificados/analisar', 'C:/_temp/certificados/teste').then(_ => console.log(_))
