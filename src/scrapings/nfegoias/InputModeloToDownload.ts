@@ -1,0 +1,21 @@
+import { Page } from 'puppeteer'
+
+import { ISettingsNFeGoias } from './ISettingsNFeGoias'
+import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
+
+export async function InputModeloToDownload (page: Page, settings: ISettingsNFeGoias): Promise<void> {
+    try {
+        await page.waitForSelector('#cmpModelo')
+        await page.select('#cmpModelo', settings.typeNF === 'NF-e' ? '55' : '65')
+    } catch (error) {
+        settings.typeLog = 'error'
+        settings.messageLog = 'InputModeloToDownload'
+        settings.messageError = error
+        settings.messageLogToShowUser = 'Erro ao selecionar modelo pra download das notas.'
+        console.log(`\t\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
+        console.log('\t\t-------------------------------------------------')
+
+        const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings)
+        await treatsMessageLog.saveLog()
+    }
+}
