@@ -6,11 +6,12 @@ import { ReadCertificate } from './read-certificate'
 
 const getPasswordOfNameFile = (file: string, passwordDefault: string): string => {
     try {
+        const extensionFile = path.extname(file)
         const fileUpperCase = file.toUpperCase()
         const positionPassword = fileUpperCase.indexOf(passwordDefault)
         const textWithPassword = file.substring(positionPassword + passwordDefault.length, file.length).trim()
         const textWithPasswordSplit = textWithPassword.split(' ')
-        const password = textWithPasswordSplit[0].replace('.pfx', '')
+        const password = textWithPasswordSplit[0].replace(extensionFile, '')
         return password
     } catch (error) {
         console.log(error)
@@ -51,6 +52,10 @@ export async function OrganizeCertificates (directory: string, directoryToCopy: 
                         await fsExtra.copy(file, path.resolve(directoryToCopy, 'senha_invalida', `${nameFileOriginal}`), { overwrite: true })
                         break
                     }
+                    if (new Date() > new Date(certificateInfo.validity.end)) {
+                        await fsExtra.copy(file, path.resolve(directoryToCopy, 'vencido', `${nameFileOriginal}`), { overwrite: true })
+                        break
+                    }
                     const commonName = certificateInfo.commonName.trim().normalize('NFD').replace(/([\u0300-\u036f]|[^0-9a-zA-Z ])/g, '').toUpperCase().substring(0, 70)
                     const nameFile = `${commonName}-${password}${extensionFile}`
                     await fsExtra.copy(file, path.resolve(directoryToCopy, 'ok', nameFile), { overwrite: true })
@@ -66,4 +71,4 @@ export async function OrganizeCertificates (directory: string, directoryToCopy: 
     }
 }
 
-// OrganizeCertificates('C:/_temp/certificados/analisar', 'C:/_temp/certificados/teste').then(_ => console.log(_))
+OrganizeCertificates('C:/_temp/certificados/analisar', 'C:/_temp/certificados/teste').then(_ => console.log(_))
