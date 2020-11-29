@@ -1,7 +1,7 @@
 // import path from 'path'
 import { Browser, Page } from 'puppeteer'
 
-// import SaveLogPrefGoiania from '../../controllers/SaveLogPrefGoiania'
+import SaveLogNfeNfceGO from '../../controllers/SaveLogNfeNfceGO'
 // import createFolderToSaveData from '../../utils/CreateFolderToSaveData'
 import { ISettingsNFeGoias } from './ISettingsNFeGoias'
 
@@ -24,24 +24,24 @@ export class TreatsMessageLogNFeGoias {
         await this.page.close()
         if (this.browser) await this.browser.close()
 
-        // const saveLogPrefGoiania = new SaveLogPrefGoiania()
-        // await saveLogPrefGoiania.saveLog({
-        //     id: this.settings.id,
-        //     prefGoianiaAccess: this.settings.idUser,
-        //     hourLog: this.settings.hourLog,
-        //     typeLog: this.settings.typeLog || 'error',
-        //     messageLog: this.settings.messageLog || '',
-        //     messageError: this.settings.messageError,
-        //     messageLogToShowUser: this.settings.messageLogToShowUser,
-        //     urlImageDown: this.pathImg,
-        //     codeCompanie: this.settings.codeCompanie,
-        //     nameCompanie: this.settings.companie,
-        //     inscricaoMunicipal: this.settings.inscricaoMunicipal,
-        //     dateStartDown: this.settings.dateStartDown,
-        //     dateEndDown: this.settings.dateEndDown,
-        //     qtdNotesDown: this.settings.qtdTimesReprocessed,
-        //     qtdTimesReprocessed: this.settings.qtdTimesReprocessed
-        // })
+        const saveLogNfeNfceGO = new SaveLogNfeNfceGO()
+        await saveLogNfeNfceGO.saveLog({
+            id: this.settings.id,
+            hourLog: this.settings.hourLog,
+            typeLog: this.settings.typeLog || 'error',
+            messageLog: this.settings.messageLog || '',
+            messageError: this.settings.messageError,
+            messageLogToShowUser: this.settings.messageLogToShowUser,
+            urlImageDown: '',
+            codeCompanie: this.settings.codeCompanie,
+            nameCompanie: this.settings.nameCompanie,
+            cgceCompanie: this.settings.cgceCompanie,
+            modelNF: this.settings.modelNF,
+            dateStartDown: this.settings.dateStartDown,
+            dateEndDown: this.settings.dateEndDown,
+            qtdNotesDown: this.settings.qtdTimesReprocessed,
+            qtdTimesReprocessed: this.settings.qtdTimesReprocessed
+        })
 
         throw `[${this.settings.typeLog}]-${this.settings.messageLog}-${this.settings.messageError}`
     }

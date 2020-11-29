@@ -18,6 +18,9 @@ export async function ClickDownloadModal (page: Page, settings: ISettingsNFeGoia
         await page.waitForTimeout(2000)
         await page.waitForSelector('#dnwld-all-btn-ok')
         const qtdNotes = await getQtdNotes(page)
+        if (!qtdNotes) {
+            throw 'NOT-EXIST-NOTES-TO-DOWN'
+        }
         await page.click('#dnwld-all-btn-ok')
         return qtdNotes
     } catch (error) {
@@ -25,6 +28,10 @@ export async function ClickDownloadModal (page: Page, settings: ISettingsNFeGoia
         settings.messageLog = 'ClickDownloadModal'
         settings.messageError = error
         settings.messageLogToShowUser = 'Erro ao clicar pra baixar as notas na tela suspensa que abre'
+        if (error === 'NOT-EXIST-NOTES-TO-DOWN') {
+            settings.typeLog = 'warning'
+            settings.messageLogToShowUser = 'Não há notas neste período pra download'
+        }
         console.log(`\t\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
         console.log('\t\t-------------------------------------------------')
 

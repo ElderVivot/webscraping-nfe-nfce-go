@@ -31,9 +31,14 @@ class Applicattion {
         console.log('4- Percorrendo certificados')
         const certificates = await mainGetCertificates()
         for (const certificate of certificates) {
+            const nameCertificate = certificate.requerenteCN.split(':')[0]
             console.log(`- Lendo certificado ${certificate.requerenteCN}`)
             await mainSetDefaultCertificateRegedit('https://nfe.sefaz.go.gov.br', certificate)
-            await MainNFGoias()
+            await MainNFGoias({
+                hourLog: this.hourLog,
+                dateHourProcessing: this.hourLogToCreateFolder,
+                nameCompanie: nameCertificate
+            })
         }
     }
 }

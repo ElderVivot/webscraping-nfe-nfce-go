@@ -5,9 +5,9 @@ import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
 
 export async function LoguinCertificado (page: Page, browser: Browser, settings: ISettingsNFeGoias): Promise<void> {
     try {
-        await page.goto('https://nfe.sefaz.go.gov.br/nfeweb/sites/nfe/consulta-publica/principal', { waitUntil: 'networkidle2' })
-        await page.waitForSelector("a[href*='nfe.sefaz.go.gov'] > button")
-        await page.click("a[href*='nfe.sefaz.go.gov'] > button")
+        await page.goto('https://nfe.sefaz.go.gov.br/nfeweb/sites/nfe/consulta-publica', { waitUntil: 'networkidle2' })
+        // await page.waitForSelector("a[href*='nfe.sefaz.go.gov'] > button")
+        // await page.click("a[href*='nfe.sefaz.go.gov'] > button")
         await page.waitForSelector('#filtro')
     } catch (error) {
         settings.typeLog = 'error'

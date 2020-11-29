@@ -9,7 +9,7 @@ export interface ISettingsNFeGoias {
     codeCompanie?: string,
     nameCompanie?: string,
     cgceCompanie?: string,
-    inscricaoMunicipal?: string,
+    modelNF?: string,
     entradasOrSaidas?: string,
     typeNF?: string,
     messageError?: string,

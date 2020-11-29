@@ -39,7 +39,7 @@ const mountFolder = (settings: ISettingsNFeGoias, folder: string) => {
         } else if (field === 'typeNF') {
             folderComplete += settings.typeNF ? `${settings.typeNF}/` : ''
         } else if (field === 'codeCompanieWithNameCompanie') {
-            folderComplete += settings.nameCompanie && settings.codeCompanie ? `${settings.codeCompanie}-${nameCompanie}/` : `${nameCompanie} - ${settings.inscricaoMunicipal}/`
+            folderComplete += settings.nameCompanie && settings.codeCompanie ? `${settings.codeCompanie}-${nameCompanie}/` : `${nameCompanie} - ${settings.cgceCompanie}/`
         } else if (field === 'codeCompanieRotinaAutomatica') {
             folderComplete += settings.codeCompanie ? `${settings.codeCompanie}-/` : ''
         } else if (field === 'monthYearRotinaAutomatica') {

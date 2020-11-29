@@ -6,7 +6,7 @@ import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
 
 const siteDetails = {
     sitekey: '6LfTFzIUAAAAAKINyrQ9X5LPg4W3iTbyyYKzeUd3',
-    pageurl: 'https://nfe.sefaz.go.gov.br/nfeweb/sites/nfe/consulta-publica/principal'
+    pageurl: 'https://nfe.sefaz.go.gov.br/nfeweb/sites/nfe/consulta-publica'
 }
 
 function promiseTimeOut (tempo: number) {

@@ -79,8 +79,8 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                     const monthSring = functions.zeroLeft(month.toString(), 2)
 
                     settings.cgceCompanie = option.value
-                    settings.dateStartDown = format(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.inicialDate, 'America/Sao_Paulo')), 'dd/MM/yyyy', { timeZone: 'America/Sao_Paulo' })
-                    settings.dateEndDown = format(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.finalDate, 'America/Sao_Paulo')), 'dd/MM/yyyy', { timeZone: 'America/Sao_Paulo' })
+                    settings.dateStartDown = format(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.inicialDate, 'America/Sao_Paulo')), 'yyyy-MM-dd', { timeZone: 'America/Sao_Paulo' })
+                    settings.dateEndDown = format(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.finalDate, 'America/Sao_Paulo')), 'yyyy-MM-dd', { timeZone: 'America/Sao_Paulo' })
                     settings.year = year
                     settings.month = monthSring
 
@@ -145,4 +145,4 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
     if (browser.isConnected()) await browser.close()
 }
 
-// MainNFGoias().then(_ => console.log(_))
+MainNFGoias().then(_ => console.log(_))

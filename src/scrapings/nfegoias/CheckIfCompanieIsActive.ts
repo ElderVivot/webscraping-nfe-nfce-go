@@ -29,9 +29,9 @@ export async function CheckIfCompanieIsActive (page: Page, settings: ISettingsNF
         return settings
     } catch (error) {
         settings.typeLog = 'error'
-        settings.messageLog = 'LoguinCertificado'
+        settings.messageLog = 'CheckIfCompanieIsActive'
         settings.messageError = error
-        settings.messageLogToShowUser = 'Erro ao fazer loguin com o certificado.'
+        settings.messageLogToShowUser = 'Erro ao checar se empresa está ativa como cliente da contabilidade.'
         console.log(`[Final] - ${settings.messageLogToShowUser}`)
         console.log('-------------------------------------------------')
 

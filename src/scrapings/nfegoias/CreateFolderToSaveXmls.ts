@@ -15,7 +15,7 @@ export async function CreateFolderToSaveXmls (page: Page, settings: ISettingsNFe
         })
     } catch (error) {
         settings.typeLog = 'error'
-        settings.messageLog = 'UpdateFolderToSaveXmls'
+        settings.messageLog = 'CreateFolderToSaveXmls'
         settings.messageError = error
         settings.messageLogToShowUser = 'Erro ao criar pasta pra salvar os xmls.'
         console.log(`\t\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)

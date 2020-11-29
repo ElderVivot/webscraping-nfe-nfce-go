@@ -21,13 +21,6 @@ export async function CheckIfDownloadInProgress (page: Page, settings: ISettings
                         if (operationFinishedSanitize.indexOf('OPERACAO CONCLUIDA')) finishedDownload = true
                     }
 
-                    // let downloadAllNotes = false
-                    // const qtdNotesOriginal: string = document.querySelector('#dnwld-all-num-elemnts')?.textContent
-                    // if (qtdNotesOriginal) {
-                    //     const qtdNotesInProgress = Number(qtdNotesOriginal.split(':')[1].split('/')[0])
-                    //     const qtdNotesTotal = Number(qtdNotesOriginal.split(':')[1].split('/')[1])
-                    //     if (qtdNotesInProgress === qtdNotesTotal) downloadAllNotes = true
-                    // }
                     if (!timeInfoLoading && finishedDownload) {
                         return 1
                     } else {

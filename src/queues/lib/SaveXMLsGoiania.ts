@@ -1,7 +1,7 @@
 import Queue from 'bull'
 
 import redisConfig from '../../config/redis'
-import SaveLogPrefGoiania from '../../controllers/SaveLogPrefGoiania'
+import SaveLogPrefGoiania from '../../controllers/SaveLogNfeNfceGO'
 import SaveXMLsGoiania from '../jobs/SaveXMLsGoiania'
 
 const saveXMLsGoiania = new Queue(SaveXMLsGoiania.key, { redis: redisConfig })

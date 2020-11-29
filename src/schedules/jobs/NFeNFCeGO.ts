@@ -1,9 +1,9 @@
 import { CronJob } from 'cron'
 
-import NFSeGoiania from '../../scrapings/nfsegoiania/index'
+import NFeNFCeGO from '../../scrapings/nfegoias/index'
 
 async function processNotes () {
-    const applicattion = new NFSeGoiania()
+    const applicattion = new NFeNFCeGO()
     await applicattion.process()
 }
 

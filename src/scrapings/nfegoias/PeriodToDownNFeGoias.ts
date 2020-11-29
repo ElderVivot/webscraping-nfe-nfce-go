@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { subMonths, subDays } from 'date-fns'
 
 // import GetMaxDateDownGoiania from '../controllers/GetMaxDateDownGoiania'
@@ -12,7 +13,8 @@ export async function PeriodToDownNFeGoias (settings: ISettingsNFeGoias): Promis
     const datedownmax = maxDate?.datedownmax
     let dateStart: Date
     if (!datedownmax) {
-        dateStart = subMonths(new Date(), 3.5)
+        dateStart = subMonths(new Date(), Number(process.env.RETROACTIVE_MONTHS_TO_DOWNLOAD) || 1)
+        dateStart.setDate(1)
     } else {
         dateStart = new Date(datedownmax)
     }
