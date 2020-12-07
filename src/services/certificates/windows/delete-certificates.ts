@@ -22,7 +22,7 @@ export async function mainDeleteCertificates (deleteOnlyExpired = true): Promise
         if (checkIfCertificateIsExpired(certificate) || !deleteOnlyExpired) {
             const { stdout, stderr } = await execAsync(`certutil -delstore -user My ${certificate.numeroSerie}`)
             if (stdout) {
-                console.log(`- Certificado ${certificate.requerenteCN} deletado com sucesso: `)
+                console.log(`- Certificado ${certificate.requerenteCN} deletado com sucesso`)
             }
             if (stderr) {
                 console.log('- Erro ao deletar certificado: ', stderr)

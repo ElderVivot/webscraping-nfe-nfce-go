@@ -1,9 +1,12 @@
 import { format, zonedTimeToUtc } from 'date-fns-tz'
 import path from 'path'
-import puppeteer from 'puppeteer-core'
+// import puppeteer from 'puppeteer-core'
 // import puppeteerOriginal from 'puppeteer'
-// import puppeteerExtra from 'puppeteer-extra'
+import puppeteer from 'puppeteer-extra'
+import RecaptchaPlugin from 'puppeteer-extra-plugin-recaptcha'
+import 'dotenv/config'
 
+import { cleanDataObject } from '../../utils/clean-data-object'
 import * as functions from '../../utils/functions'
 import { ChangeCnpj } from './ChangeCnpj'
 import { CheckIfCompanieIsActive } from './CheckIfCompanieIsActive'
@@ -21,11 +24,22 @@ import { InputPeriodToDownload } from './InputPeriodToDownload'
 import { ISettingsNFeGoias } from './ISettingsNFeGoias'
 import { LoguinCertificado } from './LoguinCertificado'
 import { PeriodToDownNFeGoias } from './PeriodToDownNFeGoias'
+import { SendLastDownloadToQueue } from './SendLastDownloadToQueue'
 import { SetDateInicialAndFinalOfMonth } from './SetDateInicialAndFinalOfMonth'
 
 const modelosNFe = ['55', '65']
 
 export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<void> {
+    puppeteer.use(
+        RecaptchaPlugin({
+            provider: {
+                id: '2captcha',
+                token: process.env.API_2CAPTCHA
+            },
+            visualFeedback: true
+        })
+    )
+
     const browser = await puppeteer.launch({
         ignoreHTTPSErrors: true,
         headless: false,
@@ -52,97 +66,103 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
 
     // Percorre o array de empresas
     for (const option of optionsCnpjs) {
-        // Pega o período necessário pra processamento
-        let periodToDown = null
-        if (!dateStartDown && !dateEndDown) {
-            periodToDown = await PeriodToDownNFeGoias(settings)
-        } else {
-            periodToDown = {
-                dateStart: new Date(zonedTimeToUtc(dateStartDown, 'America/Sao_Paulo')),
-                dateEnd: new Date(zonedTimeToUtc(dateEndDown, 'America/Sao_Paulo'))
+        settings.cgceCompanie = option.value
+        console.log(`4- Abrindo CNPJ ${option.label}`)
+
+        for (const modelo of modelosNFe) {
+            settings.typeNF = modelo === '55' ? 'NF-e' : 'NFC-e'
+            settings.modelNF = modelo
+            console.log(`\t5- Buscando ${settings.typeNF}`)
+
+            // Pega o período necessário pra processamento
+            let periodToDown = null
+            if (!dateStartDown && !dateEndDown) {
+                periodToDown = await PeriodToDownNFeGoias(settings)
+            } else {
+                periodToDown = {
+                    dateStart: new Date(zonedTimeToUtc(dateStartDown, 'America/Sao_Paulo')),
+                    dateEnd: new Date(zonedTimeToUtc(dateEndDown, 'America/Sao_Paulo'))
+                }
             }
-        }
-        let year = periodToDown.dateStart.getFullYear()
-        const yearInicial = year
-        const yearFinal = periodToDown.dateEnd.getFullYear()
-        const monthInicial = periodToDown.dateStart.getMonth() + 1
-        const monthFinal = periodToDown.dateEnd.getMonth() + 1
+            let year = periodToDown.dateStart.getFullYear()
+            const yearInicial = year
+            const yearFinal = periodToDown.dateEnd.getFullYear()
+            const monthInicial = periodToDown.dateStart.getMonth() + 1
+            const monthFinal = periodToDown.dateEnd.getMonth() + 1
 
-        try {
-            while (year <= yearFinal) {
-                const months = functions.returnMonthsOfYear(year, monthInicial, yearInicial, monthFinal, yearFinal)
+            try {
+                while (year <= yearFinal) {
+                    const months = functions.returnMonthsOfYear(year, monthInicial, yearInicial, monthFinal, yearFinal)
 
-                for (const month of months) {
-                    //  clean settings to old don't affect new process
-                    settings = {}
-                    const dateInicialAndFinalOfMonth = SetDateInicialAndFinalOfMonth(periodToDown, month, year)
-                    const monthSring = functions.zeroLeft(month.toString(), 2)
+                    for (const month of months) {
+                        if (month === 12) continue // por enquanto ignora mes 12
+                        //  clean settings to old don't affect new process
+                        settings = cleanDataObject(settings, [], ['wayCertificate', 'hourLog', 'dateHourProcessing', 'nameCompanie', 'cgceCompanie', 'modelNF', 'typeNF'])
+                        const dateInicialAndFinalOfMonth = SetDateInicialAndFinalOfMonth(periodToDown, month, year)
+                        const monthSring = functions.zeroLeft(month.toString(), 2)
+                        console.log(`\t6- Iniciando processamento do mês ${monthSring}/${year}`)
 
-                    settings.cgceCompanie = option.value
-                    settings.dateStartDown = format(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.inicialDate, 'America/Sao_Paulo')), 'yyyy-MM-dd', { timeZone: 'America/Sao_Paulo' })
-                    settings.dateEndDown = format(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.finalDate, 'America/Sao_Paulo')), 'yyyy-MM-dd', { timeZone: 'America/Sao_Paulo' })
-                    settings.year = year
-                    settings.month = monthSring
+                        settings.dateStartDown = format(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.inicialDate, 'America/Sao_Paulo')), 'yyyy-MM-dd', { timeZone: 'America/Sao_Paulo' })
+                        settings.dateEndDown = format(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.finalDate, 'America/Sao_Paulo')), 'yyyy-MM-dd', { timeZone: 'America/Sao_Paulo' })
+                        settings.year = year
+                        settings.month = monthSring
 
-                    console.log('\t4- Checando se a empresa é cliente neste período.')
-                    settings = await CheckIfCompanieIsActive(page, settings)
-
-                    for (const modelo of modelosNFe) {
-                        settings.typeNF = modelo === '55' ? 'NF-e' : 'NFC-e'
+                        console.log('\t7- Checando se a empresa é cliente neste período.')
+                        settings = await CheckIfCompanieIsActive(page, settings)
 
                         try {
                             const pageMonth = await browser.newPage()
                             await pageMonth.setViewport({ width: 0, height: 0 })
                             await pageMonth.goto(urlActual)
 
-                            console.log(`\t5- Abrindo CNPJ ${option.label}`)
+                            console.log('\t8- Informando o CNPJ e período pra download.')
+                            await InputPeriodToDownload(pageMonth, settings)
                             await ChangeCnpj(pageMonth, settings)
 
-                            console.log(`\t6- Iniciando processamento do mês ${monthSring}/${year}`)
-
-                            console.log(`\t7- Buscando ${settings.typeNF}`)
-
-                            console.log('\t8- Informando período e modelo')
-                            await InputPeriodToDownload(pageMonth, settings)
+                            console.log('\t9- Informando o modelo')
                             await InputModeloToDownload(pageMonth, settings)
 
-                            console.log('\t9- Passando pelo Captcha')
+                            console.log('\t10- Passando pelo Captcha')
                             await GoesThroughCaptcha(pageMonth, settings)
 
-                            console.log('\t10- Verificando se há notas no filtro passado')
+                            console.log('\t11- Verificando se há notas no filtro passado')
                             await CheckIfSemResultados(pageMonth, settings)
 
-                            console.log('\t11- Clicando pra baixar todos os arquivos')
+                            console.log('\t12- Clicando pra baixar todos os arquivos')
                             await ClickDownloadAll(pageMonth, settings)
 
-                            console.log('\t12- Clicando pra baixar dentro do modal')
+                            console.log('\t13- Clicando pra baixar dentro do modal')
                             const qtdNotes = await ClickDownloadModal(pageMonth, settings)
                             settings.qtdNotes = qtdNotes
 
-                            console.log(`\t13- Criando pasta pra salvar ${settings.qtdNotes} notas`)
+                            console.log(`\t14- Criando pasta pra salvar ${settings.qtdNotes} notas`)
                             settings.typeLog = 'success' // update to sucess to create folder
                             await CreateFolderToSaveXmls(pageMonth, settings)
 
-                            console.log('\t14- Checando se o download ainda está em progresso')
+                            console.log('\t15- Checando se o download ainda está em progresso')
                             await CheckIfDownloadInProgress(pageMonth, settings)
 
-                            console.log('\t15- Após processamento concluído, clicando em OK pra finalizar')
+                            console.log('\t16- Após processamento concluído, clicando em OK pra finalizar')
                             await ClickOkDownloadFinish(pageMonth, settings)
+
+                            console.log('\t17- Enviando informação que o arquivo foi baixado pra fila de salvar o processamento.')
+                            await SendLastDownloadToQueue(pageMonth, settings)
 
                             await CloseOnePage(pageMonth, 'Empresa')
                         } catch (error) { console.log(error) }
                     }
+                    year++
                 }
-                year++
-            }
-            qtdEmpresas++
-            if (qtdEmpresas === optionsCnpjs.length) {
-                if (browser.isConnected()) await browser.close()
-            }
-        } catch (error) { console.log(error) }
+                qtdEmpresas++
+                if (qtdEmpresas === optionsCnpjs.length) {
+                    if (browser.isConnected()) await browser.close()
+                }
+            } catch (error) { console.log(error) }
+        }
     }
     console.log('[Final] - Todos os dados deste navegador foram processados, fechando navegador.')
     if (browser.isConnected()) await browser.close()
 }
 
-MainNFGoias().then(_ => console.log(_))
+// const hourLog = format(new Date(), 'yyyy-MM-dd hh:mm:ss a', { timeZone: 'America/Sao_Paulo' })
+// MainNFGoias({ hourLog }).then(_ => console.log(_))

@@ -2,6 +2,7 @@ import TTypeLog from './TTypeLog'
 
 export default interface ILogNfeNfceGO {
     id?: number,
+    wayCertificate?: string,
     cgceCompanie?: string
     codeCompanie?: string
     nameCompanie?: string

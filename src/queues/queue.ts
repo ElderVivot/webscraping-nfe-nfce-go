@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import SaveXMLsGoiania from './jobs/SaveXMLsGoiania'
-import SaveXMLsGoianiaLib from './lib/SaveXMLsGoiania'
+import SaveXMLsNFeNFCGO from './jobs/SaveXMLsNFeNFCGO'
+import SaveXMLsNFeNFCGOLib from './lib/SaveXMLsNFeNFCGO'
 
-SaveXMLsGoianiaLib.process(SaveXMLsGoiania.handle)
+SaveXMLsNFeNFCGOLib.process(SaveXMLsNFeNFCGO.handle)

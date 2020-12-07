@@ -44,6 +44,7 @@ function getDataCertificate (stdoutSplit: Array<string>): void {
 }
 
 export async function mainGetCertificates (): Promise<Array<ICertifate>> {
+    certificates.splice(0, certificates.length)
     const { stdout, stderr } = await execAsync('certutil -store -user My')
     let stdoutSplit: Array<string>
     if (stdout) {

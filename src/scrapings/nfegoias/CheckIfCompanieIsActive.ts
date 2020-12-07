@@ -32,10 +32,14 @@ export async function CheckIfCompanieIsActive (page: Page, settings: ISettingsNF
         settings.messageLog = 'CheckIfCompanieIsActive'
         settings.messageError = error
         settings.messageLogToShowUser = 'Erro ao checar se empresa está ativa como cliente da contabilidade.'
+        if (error === 'COMPANIE_NOT_CLIENT_THIS_ACCOUNTING_OFFICE') {
+            settings.typeLog = 'warning'
+            settings.messageLogToShowUser = 'Empresa não é cliente desta contabilidade neste período.'
+        }
         console.log(`[Final] - ${settings.messageLogToShowUser}`)
         console.log('-------------------------------------------------')
 
-        const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings)
+        const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
         await treatsMessageLog.saveLog()
     }
 }

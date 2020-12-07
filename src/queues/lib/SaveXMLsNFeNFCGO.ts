@@ -1,17 +1,17 @@
 import Queue from 'bull'
+import { ISettingsNFeGoias } from 'src/scrapings/nfegoias/ISettingsNFeGoias'
 
 import redisConfig from '../../config/redis'
-import SaveLogPrefGoiania from '../../controllers/SaveLogNfeNfceGO'
-import SaveXMLsGoiania from '../jobs/SaveXMLsGoiania'
+import SaveLogNfeNfceGO from '../../controllers/SaveLogNfeNfceGO'
+import SaveXMLsNFeNFCGO from '../jobs/SaveXMLsNFeNFCGO'
 
-const saveXMLsGoiania = new Queue(SaveXMLsGoiania.key, { redis: redisConfig })
+const saveXMLsNFeNFCGO = new Queue(SaveXMLsNFeNFCGO.key, { redis: redisConfig })
 
-saveXMLsGoiania.on('failed', async (job, error) => {
-    const { settings } = job.data
-    const saveLogPrefGoiania = new SaveLogPrefGoiania()
-    await saveLogPrefGoiania.saveLog({
+saveXMLsNFeNFCGO.on('failed', async (job, error) => {
+    const settings: ISettingsNFeGoias = job.data.settings
+    const saveLogNfeNfceGO = new SaveLogNfeNfceGO()
+    await saveLogNfeNfceGO.saveLog({
         id: settings.id,
-        prefGoianiaAccess: settings.idUser,
         hourLog: settings.hourLog,
         typeLog: 'error',
         messageLog: 'ErrorToProcessDataInQueue',
@@ -19,8 +19,9 @@ saveXMLsGoiania.on('failed', async (job, error) => {
         messageError: error.message,
         urlImageDown: '',
         codeCompanie: settings.codeCompanie,
-        nameCompanie: settings.companie,
-        inscricaoMunicipal: settings.inscricaoMunicipal,
+        nameCompanie: settings.nameCompanie,
+        cgceCompanie: settings.cgceCompanie,
+        modelNF: settings.modelNF,
         dateStartDown: settings.dateStartDown,
         dateEndDown: settings.dateEndDown,
         qtdNotesDown: settings.qtdNotes,
@@ -31,12 +32,12 @@ saveXMLsGoiania.on('failed', async (job, error) => {
     console.log(error)
 })
 
-saveXMLsGoiania.on('completed', async (job) => {
-    const { settings } = job.data
-    const saveLogPrefGoiania = new SaveLogPrefGoiania()
-    await saveLogPrefGoiania.saveLog({
+saveXMLsNFeNFCGO.on('completed', async (job) => {
+    const settings: ISettingsNFeGoias = job.data.settings
+    const saveLogNfeNfceGO = new SaveLogNfeNfceGO()
+    await saveLogNfeNfceGO.saveLog({
         id: settings.id,
-        prefGoianiaAccess: settings.idUser,
+        wayCertificate: settings.wayCertificate,
         hourLog: settings.hourLog,
         typeLog: 'success',
         messageLog: 'SucessToSaveNotes',
@@ -44,8 +45,9 @@ saveXMLsGoiania.on('completed', async (job) => {
         messageError: '',
         urlImageDown: '',
         codeCompanie: settings.codeCompanie,
-        nameCompanie: settings.companie,
-        inscricaoMunicipal: settings.inscricaoMunicipal,
+        nameCompanie: settings.nameCompanie,
+        cgceCompanie: settings.cgceCompanie,
+        modelNF: settings.modelNF,
         dateStartDown: settings.dateStartDown,
         dateEndDown: settings.dateEndDown,
         qtdNotesDown: settings.qtdNotes,
@@ -53,4 +55,4 @@ saveXMLsGoiania.on('completed', async (job) => {
     })
 })
 
-export default saveXMLsGoiania
+export default saveXMLsNFeNFCGO

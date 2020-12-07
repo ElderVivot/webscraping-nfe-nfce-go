@@ -9,24 +9,27 @@ export class TreatsMessageLogNFeGoias {
     private page: Page
     private browser: Browser | undefined
     private settings: ISettingsNFeGoias
+    private noClosePage: boolean
     // private pathImg = ''
 
-    constructor (page: Page, settings: ISettingsNFeGoias, browser?: Browser) {
+    constructor (page: Page, settings: ISettingsNFeGoias, browser?: Browser, noClosePage?: boolean) {
         this.page = page
         this.browser = browser
         this.settings = settings
+        this.noClosePage = noClosePage
     }
 
     async saveLog (): Promise<void> {
         // this.pathImg = await createFolderToSaveData(this.settings)
         // this.pathImg = path.resolve(this.pathImg, `${this.settings.messageLog}.png`)
         // await this.page.screenshot({ path: this.pathImg, fullPage: true })
-        await this.page.close()
+        if (!this.noClosePage) await this.page.close()
         if (this.browser) await this.browser.close()
 
         const saveLogNfeNfceGO = new SaveLogNfeNfceGO()
         await saveLogNfeNfceGO.saveLog({
             id: this.settings.id,
+            wayCertificate: this.settings.wayCertificate,
             hourLog: this.settings.hourLog,
             typeLog: this.settings.typeLog || 'error',
             messageLog: this.settings.messageLog || '',
@@ -36,7 +39,7 @@ export class TreatsMessageLogNFeGoias {
             codeCompanie: this.settings.codeCompanie,
             nameCompanie: this.settings.nameCompanie,
             cgceCompanie: this.settings.cgceCompanie,
-            modelNF: this.settings.modelNF,
+            modelNF: this.settings.modelNF || '',
             dateStartDown: this.settings.dateStartDown,
             dateEndDown: this.settings.dateEndDown,
             qtdNotesDown: this.settings.qtdTimesReprocessed,

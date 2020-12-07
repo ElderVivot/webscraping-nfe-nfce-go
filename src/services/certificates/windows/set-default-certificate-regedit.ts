@@ -11,7 +11,7 @@ const execAsync = util.promisify(exec)
 export async function mainSetDefaultCertificateRegedit (url: string, certificade: ICertifate): Promise<void> {
     const pathSetDefaultCertificateRegedit = path.resolve(__dirname, 'set-default-certificate-regedit.ps1')
     const textCommand = `New-Item -Path HKLM:\\SOFTWARE\\Policies\\Google\\Chrome -Name AutoSelectCertificateForUrls -Force
-Set-Itemproperty -Path HKLM:\\SOFTWARE\\Policies\\Google\\Chrome\\AutoSelectCertificateForUrls -Name 1 -Value '{"pattern":"${url}","filter":{"SUBJECT":{"CN":"${certificade.requerenteCN}","OU":"${certificade.requerenteOU}"}}}'
+Set-Itemproperty -Path HKLM:\\SOFTWARE\\Policies\\Google\\Chrome\\AutoSelectCertificateForUrls -Name 1 -Value '{"pattern":"${url}","filter":{"SUBJECT":{"CN":"${certificade.requerenteCN.replace("'", "''")}"}}}'
 exit`
 
     fs.writeFile(

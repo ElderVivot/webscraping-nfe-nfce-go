@@ -5,8 +5,9 @@ import 'dotenv/config'
 import { OrganizeCertificates } from '../../services/certificates/organize-certificates'
 import { mainDeleteCertificates } from '../../services/certificates/windows/delete-certificates'
 import { mainGetCertificates } from '../../services/certificates/windows/get-all-certificates-user-my'
-import { mainInstallCertificates } from '../../services/certificates/windows/install-certificates'
+import { installCertificate } from '../../services/certificates/windows/install-certificates'
 import { mainSetDefaultCertificateRegedit } from '../../services/certificates/windows/set-default-certificate-regedit'
+import { listFiles } from '../../utils/get-list-files-of-folder'
 import { MainNFGoias } from './MainNFGoias'
 
 class Applicattion {
@@ -19,27 +20,52 @@ class Applicattion {
     }
 
     async process (): Promise<void> {
-        console.log('1- Organizando certificados')
+        console.log('*- Organizando certificados')
         await OrganizeCertificates(process.env.FOLDER_CERTIFICATE_ORIGINAL, process.env.FOLDER_CERTIFICATE_COPY)
 
-        console.log('2- Deletando certificados')
-        await mainDeleteCertificates(false)
+        const listFilesCertificates = await listFiles(path.resolve(process.env.FOLDER_CERTIFICATE_COPY, 'ok'))
+        for (const fileCertificate of listFilesCertificates) {
+            const nameFile = path.basename(fileCertificate).split('-')[0]
 
-        console.log('3- Instalando certificados')
-        await mainInstallCertificates(path.resolve(process.env.FOLDER_CERTIFICATE_COPY, 'ok'))
+            console.log('*- Deletando certificados')
+            await mainDeleteCertificates(false)
 
-        console.log('4- Percorrendo certificados')
-        const certificates = await mainGetCertificates()
-        for (const certificate of certificates) {
+            console.log(`*- Instalando certificado ${nameFile}`)
+            await installCertificate(fileCertificate)
+
+            const certificates = await mainGetCertificates()
+            const certificate = certificates[0]
+
             const nameCertificate = certificate.requerenteCN.split(':')[0]
-            console.log(`- Lendo certificado ${certificate.requerenteCN}`)
+            console.log(`*- Lendo certificado ${certificate.requerenteCN}`)
             await mainSetDefaultCertificateRegedit('https://nfe.sefaz.go.gov.br', certificate)
-            await MainNFGoias({
-                hourLog: this.hourLog,
-                dateHourProcessing: this.hourLogToCreateFolder,
-                nameCompanie: nameCertificate
-            })
+            await new Promise((resolve) => setTimeout(() => resolve('teste'), 10000))
+            try {
+                await MainNFGoias({
+                    wayCertificate: fileCertificate,
+                    hourLog: this.hourLog,
+                    dateHourProcessing: this.hourLogToCreateFolder,
+                    nameCompanie: nameCertificate
+                })
+            } catch (error) {
+                console.log('*- Erro ao processar busca de notas.')
+            }
+            console.log('------------------------------------------')
         }
+
+        // console.log('4- Percorrendo certificados')
+        // const certificates = await mainGetCertificates()
+        // for (const certificate of certificates) {
+        //     const nameCertificate = certificate.requerenteCN.split(':')[0]
+        //     console.log(`- Lendo certificado ${certificate.requerenteCN}`)
+        //     await mainSetDefaultCertificateRegedit('https://nfe.sefaz.go.gov.br', certificate)
+        //     // await new Promise((resolve) => setTimeout(() => resolve('teste'), 10000))
+        //     await MainNFGoias({
+        //         hourLog: this.hourLog,
+        //         dateHourProcessing: this.hourLogToCreateFolder,
+        //         nameCompanie: nameCertificate
+        //     })
+        // }
     }
 }
 

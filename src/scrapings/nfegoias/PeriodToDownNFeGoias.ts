@@ -1,15 +1,13 @@
 import 'dotenv/config'
 import { subMonths, subDays } from 'date-fns'
 
-// import GetMaxDateDownGoiania from '../controllers/GetMaxDateDownGoiania'
+import GetMaxDateDownNfeNfce from '../../controllers/GetMaxDateDownNfeNfce'
 import IPeriodToDownNotes from '../../models/IPeriodToDownNotes'
 import { ISettingsNFeGoias } from './ISettingsNFeGoias'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function PeriodToDownNFeGoias (settings: ISettingsNFeGoias): Promise<IPeriodToDownNotes> {
-    // const getMaxDateDownGoiania = new GetMaxDateDownGoiania()
-    // const maxDate = await getMaxDateDownGoiania.getMaxDateDown(`?inscricaoMunicipal=${settings.inscricaoMunicipal}`)
-    const maxDate = null
+    const getMaxDateDownNfeNfce = new GetMaxDateDownNfeNfce()
+    const maxDate = await getMaxDateDownNfeNfce.getMaxDateDown(`?cgceCompanie=${settings.cgceCompanie}&modelNF=${settings.modelNF}`)
     const datedownmax = maxDate?.datedownmax
     let dateStart: Date
     if (!datedownmax) {
