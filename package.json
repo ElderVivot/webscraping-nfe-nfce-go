@@ -5,6 +5,8 @@
   "main": "dist/schedules/server.js",
   "scripts": {
     "start": "node dist/schedules/server.js",
+    "queue": "node dist/queues/queue.js",
+	"nfnfcgo": "node dist/scrapings/nfegoias/index.js",
     "build": "rimraf dist && tsc",
     "dev:server": "ts-node-dev --no-notify --respawn --transpileOnly --ignore-watch node_modules src/schedules/server.ts",
     "dev:queue": "ts-node-dev --no-notify --respawn --transpileOnly --ignore-watch node_modules src/queues/queue.ts",
