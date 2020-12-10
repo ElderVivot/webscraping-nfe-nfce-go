@@ -14,6 +14,7 @@ const SaveXMLsNFeNFCGO = {
         console.log('---------------------------------------------------')
         console.log(`- [XMLsNFeNFCeGO] - Iniciando processamento ${settings.nameCompanie} comp. ${settings.month}-${settings.year}`)
 
+        settings.typeLog = 'success'
         const pathRoutineAutomactic = await createFolderToSaveData(settings, true)
 
         if (settings.codeCompanie && pathRoutineAutomactic) {

@@ -1,3 +1,5 @@
+import os from 'os'
+import path from 'path'
 import pem from 'pem'
 import util from 'util'
 
@@ -7,6 +9,12 @@ interface ICertificateInfo extends pem.CertificateSubjectReadResult {
         end: number
     }
 }
+
+process.env.OPENSSL_CONF = path.join(__dirname, '..', '..', '..', 'vendor', 'openssl', 'shared', 'openssl.cnf')
+// use bundled openssl executable
+pem.config({
+    pathOpenSSL: path.join(__dirname, '..', '..', '..', 'vendor', 'openssl', os.arch() === 'x64' ? 'x64' : 'ia32', 'openssl.exe')
+})
 
 const readPkcs12Async = util.promisify(
     (bufferOrPath: string | Buffer, options: pem.Pkcs12ReadOptions, cb: pem.Callback<pem.Pkcs12ReadResult>) => pem.readPkcs12(
