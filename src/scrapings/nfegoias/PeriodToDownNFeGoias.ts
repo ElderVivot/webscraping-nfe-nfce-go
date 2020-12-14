@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { subMonths, subDays } from 'date-fns'
+import { subMonths, subDays, addDays } from 'date-fns'
 
 import GetMaxDateDownNfeNfce from '../../controllers/GetMaxDateDownNfeNfce'
 import IPeriodToDownNotes from '../../models/IPeriodToDownNotes'
@@ -14,10 +14,10 @@ export async function PeriodToDownNFeGoias (settings: ISettingsNFeGoias): Promis
         dateStart = subMonths(new Date(), Number(process.env.RETROACTIVE_MONTHS_TO_DOWNLOAD) || 1)
         dateStart.setDate(1)
     } else {
-        dateStart = new Date(datedownmax)
+        dateStart = addDays(new Date(datedownmax), 1)
     }
 
-    const dateEnd = subDays(new Date(), 1)
+    const dateEnd = subDays(new Date(), 2)
 
     return {
         dateStart, dateEnd

@@ -27,17 +27,22 @@ class Applicattion {
         for (const fileCertificate of listFilesCertificates) {
             const nameFile = path.basename(fileCertificate).split('-')[0]
 
-            console.log('*- Deletando certificados')
+            console.log('\n*- Deletando certificados')
             await mainDeleteCertificates(false)
 
-            console.log(`*- Instalando certificado ${nameFile}`)
+            console.log(`\n*- Instalando certificado ${nameFile}`)
             await installCertificate(fileCertificate)
 
             const certificates = await mainGetCertificates()
             const certificate = certificates[0]
+            if (certificate.typeCgceCertificate === 'CPF') {
+                console.log(`- Certificado ${certificate.requerenteCN} é um CPF, parando processamento.`)
+                console.log('------------------------------------------')
+                continue
+            }
 
             const nameCertificate = certificate.requerenteCN.split(':')[0]
-            console.log(`*- Lendo certificado ${certificate.requerenteCN}`)
+            console.log(`\n*- Lendo certificado ${certificate.requerenteCN}`)
             await mainSetDefaultCertificateRegedit('https://nfe.sefaz.go.gov.br', certificate)
             await new Promise((resolve) => setTimeout(() => resolve('teste'), 10000))
             try {

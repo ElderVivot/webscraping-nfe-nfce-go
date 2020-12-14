@@ -9,7 +9,7 @@ import 'dotenv/config'
 import { cleanDataObject } from '../../utils/clean-data-object'
 import * as functions from '../../utils/functions'
 import { ChangeCnpj } from './ChangeCnpj'
-import { CheckIfCompanieIsActive } from './CheckIfCompanieIsActive'
+import { CheckIfCompanieIsValid } from './CheckIfCompanieIsValid'
 import { CheckIfDownloadInProgress } from './CheckIfDownloadInProgress'
 import { CheckIfSemResultados } from './CheckIfSemResultados'
 import { ClickDownloadAll } from './ClickDownloadAll'
@@ -102,13 +102,13 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                         const monthSring = functions.zeroLeft(month.toString(), 2)
                         console.log(`\t6- Iniciando processamento do mês ${monthSring}/${year}`)
 
-                        settings.dateStartDown = format(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.inicialDate, 'America/Sao_Paulo')), 'yyyy-MM-dd', { timeZone: 'America/Sao_Paulo' })
-                        settings.dateEndDown = format(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.finalDate, 'America/Sao_Paulo')), 'yyyy-MM-dd', { timeZone: 'America/Sao_Paulo' })
+                        settings.dateStartDown = format(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.inicialDate, 'America/Sao_Paulo')), 'yyyy-MM-dd hh:mm:ss a', { timeZone: 'America/Sao_Paulo' })
+                        settings.dateEndDown = format(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.finalDate, 'America/Sao_Paulo')), 'yyyy-MM-dd hh:mm:ss a', { timeZone: 'America/Sao_Paulo' })
                         settings.year = year
                         settings.month = monthSring
 
-                        console.log('\t7- Checando se a empresa é cliente neste período.')
-                        settings = await CheckIfCompanieIsActive(page, settings)
+                        console.log('\t7- Checando se é uma empresa válida pra este período.')
+                        settings = await CheckIfCompanieIsValid(page, settings)
 
                         try {
                             const pageMonth = await browser.newPage()

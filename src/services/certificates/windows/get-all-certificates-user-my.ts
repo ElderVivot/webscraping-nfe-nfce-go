@@ -13,7 +13,8 @@ function clearDataCertificate (): ICertifate {
         notBefore: null,
         notAfter: null,
         requerenteCN: '',
-        requerenteOU: ''
+        requerenteOU: '',
+        typeCgceCertificate: ''
     }
 }
 
@@ -36,8 +37,24 @@ function getDataCertificate (stdoutSplit: Array<string>): void {
         } else if (lineFormated.indexOf('NOTAFTER:') >= 0) {
             certificate.notAfter = convertStringToDate(fieldTwo.substring(0, 10), 'dd/MM/yyyy')
         } else if (lineFormated.indexOf('REQUERENTE:') >= 0) {
+            let requerenteOU = ''
             certificate.requerenteCN = lineTrim.split('CN=')[1].split(',')[0]
-            certificate.requerenteOU = lineTrim.split('OU=')[1].split(',')[0]
+            const OUSplit = lineTrim.split('OU=')
+            for (const value of OUSplit) {
+                const valueUpperCase = value.toUpperCase()
+                for (const textsPossible of ['PF', 'CPF', 'PJ', 'CNPJ']) {
+                    if (valueUpperCase.indexOf(textsPossible) >= 0 && valueUpperCase.indexOf('REQUERENTE') === -1) {
+                        requerenteOU = valueUpperCase
+                        break
+                    }
+                }
+                if (requerenteOU) break
+            }
+            certificate.requerenteOU = requerenteOU || lineTrim.split('OU=')[1].split(',')[0]
+            certificate.typeCgceCertificate = 'CNPJ'
+            if (certificate.requerenteOU.indexOf('PF') >= 0 || certificate.requerenteOU.indexOf('CPF') >= 0) {
+                certificate.typeCgceCertificate = 'CPF'
+            }
             certificates.push(certificate)
         }
     }

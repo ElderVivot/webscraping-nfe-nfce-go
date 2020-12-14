@@ -5,6 +5,7 @@ export default interface ICompanies {
     dateInicialAsCompanie: string,
     dateInicialAsClient: string,
     dateFinalAsClient: string,
-    inscricaoMunicipal: string,
-    cgce: string
+    inscricaoEstadual: string,
+    cgce: string,
+    uf: string
 }

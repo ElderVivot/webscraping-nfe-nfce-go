@@ -12,7 +12,7 @@ const SaveXMLsNFeNFCGO = {
         const nameFile = path.basename(pathThatTheFileIsDownloaded)
 
         console.log('---------------------------------------------------')
-        console.log(`- [XMLsNFeNFCeGO] - Iniciando processamento ${settings.nameCompanie} comp. ${settings.month}-${settings.year}`)
+        console.log(`- [XMLsNFeNFCeGO] - Iniciando processamento ${settings.nameCompanie} comp. ${settings.month}-${settings.year} modelo ${settings.typeNF}`)
 
         settings.typeLog = 'success'
         const pathRoutineAutomactic = await createFolderToSaveData(settings, true)

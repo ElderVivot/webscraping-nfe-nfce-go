@@ -35,9 +35,12 @@ const identifiesPasswordDefault = (word: string, file: string): string => {
 }
 
 export async function OrganizeCertificates (directory: string, directoryToCopy: string): Promise<void> {
-    fs.rmdir(directoryToCopy, { recursive: true })
-        .then(() => console.log('- Directory with certificates deleted.'))
-        .catch(() => console.log('- Error delete directory with certificate.'))
+    try {
+        await fs.rmdir(directoryToCopy, { recursive: true })
+        console.log('- Directory with certificates deleted.')
+    } catch (error) {
+        console.log('- Error delete directory with certificate.')
+    }
     fsExtra.mkdirSync(directoryToCopy)
     const files = await listFiles(directory)
     for (const file of files) {
