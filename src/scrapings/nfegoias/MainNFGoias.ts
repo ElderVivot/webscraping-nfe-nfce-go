@@ -1,4 +1,4 @@
-import { format, zonedTimeToUtc } from 'date-fns-tz'
+import { zonedTimeToUtc } from 'date-fns-tz'
 import path from 'path'
 // import puppeteer from 'puppeteer-core'
 // import puppeteerOriginal from 'puppeteer'
