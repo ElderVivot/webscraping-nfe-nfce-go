@@ -45,6 +45,7 @@ export async function OrganizeCertificates (directory: string, directoryToCopy: 
     const files = await listFiles(directory)
     for (const file of files) {
         const extensionFile = path.extname(file)
+        if (extensionFile !== '.pfx' && extensionFile !== '.p12') continue
         const nameFileOriginal = path.basename(file)
         const fileUpperCase = file.toUpperCase()
         if (fileUpperCase.indexOf('SENHA') >= 0) {
