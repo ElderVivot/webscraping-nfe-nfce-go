@@ -102,8 +102,8 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                         const monthSring = functions.zeroLeft(month.toString(), 2)
                         console.log(`\t6- Iniciando processamento do mês ${monthSring}/${year}`)
 
-                        settings.dateStartDown = format(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.inicialDate, 'America/Sao_Paulo')), 'yyyy-MM-dd hh:mm:ss a', { timeZone: 'America/Sao_Paulo' })
-                        settings.dateEndDown = format(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.finalDate, 'America/Sao_Paulo')), 'yyyy-MM-dd hh:mm:ss a', { timeZone: 'America/Sao_Paulo' })
+                        settings.dateStartDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.inicialDate, 'America/Sao_Paulo')))} 00:00:00 AM`
+                        settings.dateEndDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.finalDate, 'America/Sao_Paulo')))} 00:00:00 AM`
                         settings.year = year
                         settings.month = monthSring
                         settings.entradasOrSaidas = 'Saidas'
