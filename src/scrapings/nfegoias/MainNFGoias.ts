@@ -106,6 +106,7 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                         settings.dateEndDown = format(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.finalDate, 'America/Sao_Paulo')), 'yyyy-MM-dd hh:mm:ss a', { timeZone: 'America/Sao_Paulo' })
                         settings.year = year
                         settings.month = monthSring
+                        settings.entradasOrSaidas = 'Saidas'
 
                         console.log('\t7- Checando se é uma empresa válida pra este período.')
                         settings = await CheckIfCompanieIsValid(page, settings)
