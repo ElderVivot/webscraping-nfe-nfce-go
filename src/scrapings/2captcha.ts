@@ -24,8 +24,8 @@ async function pollForRequestResults (id: any, retries = 70, interval = 500, del
     return poll({
         taskFn: requestCaptchaResults(id),
         interval,
-        retries,
-        progressCallback: (retriesRemaining: number, error: any) => console.log(retriesRemaining, error)
+        retries
+        // progressCallback: (retriesRemaining: number, error: any) => process.stdout.write(`${retriesRemaining} ${error}\r`)
     })
 }
 

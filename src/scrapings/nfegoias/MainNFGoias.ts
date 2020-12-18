@@ -1,9 +1,9 @@
 import { zonedTimeToUtc } from 'date-fns-tz'
 import path from 'path'
 // import puppeteer from 'puppeteer-core'
-// import puppeteerOriginal from 'puppeteer'
-import puppeteer from 'puppeteer-extra'
-import RecaptchaPlugin from 'puppeteer-extra-plugin-recaptcha'
+import puppeteer from 'puppeteer'
+// import puppeteer from 'puppeteer-extra'
+// import RecaptchaPlugin from 'puppeteer-extra-plugin-recaptcha'
 import 'dotenv/config'
 
 import { cleanDataObject } from '../../utils/clean-data-object'
@@ -30,15 +30,15 @@ import { SetDateInicialAndFinalOfMonth } from './SetDateInicialAndFinalOfMonth'
 const modelosNFe = ['55', '65']
 
 export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<void> {
-    puppeteer.use(
-        RecaptchaPlugin({
-            provider: {
-                id: '2captcha',
-                token: process.env.API_2CAPTCHA
-            },
-            visualFeedback: true
-        })
-    )
+    // puppeteer.use(
+    //     RecaptchaPlugin({
+    //         provider: {
+    //             id: '2captcha',
+    //             token: process.env.API_2CAPTCHA
+    //         },
+    //         visualFeedback: true
+    //     })
+    // )
 
     const browser = await puppeteer.launch({
         ignoreHTTPSErrors: true,

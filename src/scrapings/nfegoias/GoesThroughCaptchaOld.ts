@@ -1,37 +1,13 @@
 import { Page } from 'puppeteer'
 
-import { initiateCaptchaRequest, pollForRequestResults } from '../2captcha'
+import { promiseTimeOut } from '../../utils/promise-time-out'
 import { ISettingsNFeGoias } from './ISettingsNFeGoias'
 import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
-
-const siteDetails = {
-    sitekey: '6LfTFzIUAAAAAKINyrQ9X5LPg4W3iTbyyYKzeUd3',
-    pageurl: 'https://nfe.sefaz.go.gov.br/nfeweb/sites/nfe/consulta-publica'
-}
-
-function promiseTimeOut (tempo: number) {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve('TIME_EXCEED')
-        }, tempo)
-    })
-}
-
-async function captcha () {
-    const requestId = await initiateCaptchaRequest(siteDetails)
-    const response = await pollForRequestResults(requestId)
-    return response
-}
 
 export async function GoesThroughCaptcha (page: Page, settings: ISettingsNFeGoias): Promise<void> {
     try {
         // time out 1.5 minutes if captcha not return results
-        const response = await Promise.race([captcha(), promiseTimeOut(90000)])
-        if (response === 'TIME_EXCEED') {
-            throw 'TIME EXCEED - GOES THROUGH CAPTCHA'
-        }
-
-        await page.evaluate(`document.getElementById("g-recaptcha-response").innerHTML="${response}";`)
+        await Promise.race([page.solveRecaptchas(), promiseTimeOut(90000)])
         await Promise.all([
             page.waitForNavigation(),
             page.click("button[form='filtro']")

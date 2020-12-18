@@ -15,8 +15,8 @@ async function getQtdNotes (page: Page): Promise<number> {
 
 export async function ClickDownloadModal (page: Page, settings: ISettingsNFeGoias): Promise<number> {
     try {
-        // await page.waitForTimeout(2000)
-        await page.waitFor(2000)
+        await page.waitForTimeout(2000)
+        // await page.waitFor(2000)
         await page.waitForSelector('#dnwld-all-btn-ok')
         const qtdNotes = await getQtdNotes(page)
         if (!qtdNotes) {
