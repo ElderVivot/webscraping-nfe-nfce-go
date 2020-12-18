@@ -36,7 +36,7 @@ export async function ClickDownloadModal (page: Page, settings: ISettingsNFeGoia
         console.log(`\t\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
         console.log('\t\t-------------------------------------------------')
 
-        const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings)
+        const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
         await treatsMessageLog.saveLog()
         return 0
     }

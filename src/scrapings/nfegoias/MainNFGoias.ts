@@ -62,7 +62,7 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
 
     // Pega a URL atual pra não ter que abrir do zero o processo
     const urlActual = page.url()
-    let qtdEmpresas = 0
+    const qtdEmpresas = 0
 
     // Percorre o array de empresas
     for (const option of optionsCnpjs) {
@@ -102,8 +102,8 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                         const monthSring = functions.zeroLeft(month.toString(), 2)
                         console.log(`\t6- Iniciando processamento do mês ${monthSring}/${year}`)
 
-                        settings.dateStartDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.inicialDate, 'America/Sao_Paulo')))} 00:00:00 AM`
-                        settings.dateEndDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.finalDate, 'America/Sao_Paulo')))} 00:00:00 AM`
+                        settings.dateStartDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.inicialDate, 'America/Sao_Paulo')))} 03:00:00 AM`
+                        settings.dateEndDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.finalDate, 'America/Sao_Paulo')))} 03:00:00 AM`
                         settings.year = year
                         settings.month = monthSring
                         settings.entradasOrSaidas = 'Saidas'
@@ -112,52 +112,52 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                         settings = await CheckIfCompanieIsValid(page, settings)
 
                         try {
-                            const pageMonth = await browser.newPage()
-                            await pageMonth.setViewport({ width: 0, height: 0 })
-                            await pageMonth.goto(urlActual)
+                            // const pageMonth = await browser.newPage()
+                            // await pageMonth.setViewport({ width: 0, height: 0 })
+                            await page.goto(urlActual)
 
                             console.log('\t8- Informando o CNPJ e período pra download.')
-                            await InputPeriodToDownload(pageMonth, settings)
-                            await ChangeCnpj(pageMonth, settings)
+                            await InputPeriodToDownload(page, settings)
+                            await ChangeCnpj(page, settings)
 
                             console.log('\t9- Informando o modelo')
-                            await InputModeloToDownload(pageMonth, settings)
+                            await InputModeloToDownload(page, settings)
 
                             console.log('\t10- Passando pelo Captcha')
-                            await GoesThroughCaptcha(pageMonth, settings)
+                            await GoesThroughCaptcha(page, settings)
 
                             console.log('\t11- Verificando se há notas no filtro passado')
-                            await CheckIfSemResultados(pageMonth, settings)
+                            await CheckIfSemResultados(page, settings)
 
                             console.log('\t12- Clicando pra baixar todos os arquivos')
-                            await ClickDownloadAll(pageMonth, settings)
+                            await ClickDownloadAll(page, settings)
 
                             console.log('\t13- Clicando pra baixar dentro do modal')
-                            const qtdNotes = await ClickDownloadModal(pageMonth, settings)
+                            const qtdNotes = await ClickDownloadModal(page, settings)
                             settings.qtdNotes = qtdNotes
 
                             console.log(`\t14- Criando pasta pra salvar ${settings.qtdNotes} notas`)
                             settings.typeLog = 'success' // update to sucess to create folder
-                            await CreateFolderToSaveXmls(pageMonth, settings)
+                            await CreateFolderToSaveXmls(page, settings)
 
                             console.log('\t15- Checando se o download ainda está em progresso')
-                            await CheckIfDownloadInProgress(pageMonth, settings)
+                            await CheckIfDownloadInProgress(page, settings)
 
                             console.log('\t16- Após processamento concluído, clicando em OK pra finalizar')
-                            await ClickOkDownloadFinish(pageMonth, settings)
+                            await ClickOkDownloadFinish(page, settings)
 
                             console.log('\t17- Enviando informação que o arquivo foi baixado pra fila de salvar o processamento.')
-                            await SendLastDownloadToQueue(pageMonth, settings)
+                            await SendLastDownloadToQueue(page, settings)
 
-                            await CloseOnePage(pageMonth, 'Empresa')
+                            // await CloseOnePage(page, 'Empresa')
                         } catch (error) { console.log(error) }
                     }
                     year++
                 }
-                qtdEmpresas++
-                if (qtdEmpresas === optionsCnpjs.length) {
-                    if (browser.isConnected()) await browser.close()
-                }
+                // qtdEmpresas++
+                // if (qtdEmpresas === optionsCnpjs.length) {
+                //     if (browser.isConnected()) await browser.close()
+                // }
             } catch (error) { console.log(error) }
         }
     }

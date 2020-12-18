@@ -21,7 +21,7 @@ export async function CreateFolderToSaveXmls (page: Page, settings: ISettingsNFe
         console.log(`\t\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
         console.log('\t\t-------------------------------------------------')
 
-        const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings)
+        const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
         await treatsMessageLog.saveLog()
     }
 }

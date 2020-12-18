@@ -15,7 +15,7 @@ export async function ChangeCnpj (page: Page, settings: ISettingsNFeGoias): Prom
         console.log(`\t[Final-Empresa] - ${settings.messageLogToShowUser}`)
         console.log('\t-------------------------------------------------')
 
-        const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings)
+        const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
         await treatsMessageLog.saveLog()
     }
 }
