@@ -77,7 +77,7 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
             // Pega o período necessário pra processamento
             let periodToDown = null
             if (!dateStartDown && !dateEndDown) {
-                periodToDown = await PeriodToDownNFeGoias(settings)
+                periodToDown = await PeriodToDownNFeGoias(page, settings)
             } else {
                 periodToDown = {
                     dateStart: new Date(zonedTimeToUtc(dateStartDown, 'America/Sao_Paulo')),
