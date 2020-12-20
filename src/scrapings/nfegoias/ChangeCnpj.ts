@@ -12,7 +12,7 @@ export async function ChangeCnpj (page: Page, settings: ISettingsNFeGoias): Prom
         settings.messageLog = 'ChangeCnpj'
         settings.messageError = error
         settings.messageLogToShowUser = 'Erro ao abrir página com este CNPJ.'
-        console.log(`\t[Final-Empresa] - ${settings.messageLogToShowUser}`)
+        console.log(`\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
         console.log('\t-------------------------------------------------')
 
         const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)

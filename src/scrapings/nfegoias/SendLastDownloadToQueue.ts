@@ -39,8 +39,8 @@ export async function SendLastDownloadToQueue (page: Page, settings: ISettingsNF
         settings.messageLog = 'SendLastDownloadToQueue'
         settings.messageError = error
         settings.messageLogToShowUser = 'Erro ao enviar pra fila o último download realizado.'
-        console.log(`\t\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
-        console.log('\t\t-------------------------------------------------')
+        console.log(`\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
+        console.log('\t-------------------------------------------------')
 
         const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
         await treatsMessageLog.saveLog()

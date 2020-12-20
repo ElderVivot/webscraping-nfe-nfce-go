@@ -7,6 +7,9 @@ import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
 
 export async function CreateFolderToSaveXmls (page: Page, settings: ISettingsNFeGoias): Promise<void> {
     try {
+        if (!settings.qtdNotes) {
+            throw 'NOT_EXIST_NOTES_TO_DOWN'
+        }
         const pathNote = await createFolderToSaveData(settings)
         const client = await page.target().createCDPSession()
         await client.send('Page.setDownloadBehavior', {
@@ -18,8 +21,11 @@ export async function CreateFolderToSaveXmls (page: Page, settings: ISettingsNFe
         settings.messageLog = 'CreateFolderToSaveXmls'
         settings.messageError = error
         settings.messageLogToShowUser = 'Erro ao criar pasta pra salvar os xmls.'
-        console.log(`\t\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
-        console.log('\t\t-------------------------------------------------')
+        if (error === 'NOT_EXIST_NOTES_TO_DOWN') {
+            settings.messageLogToShowUser = 'Apesar de ter passado pelo captcha e não ter dado aviso de sem notas ele não encontrou nada no download.'
+        }
+        console.log(`\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
+        console.log('\t-------------------------------------------------')
 
         const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
         await treatsMessageLog.saveLog()

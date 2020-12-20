@@ -15,7 +15,7 @@ import { CheckIfSemResultados } from './CheckIfSemResultados'
 import { ClickDownloadAll } from './ClickDownloadAll'
 import { ClickDownloadModal } from './ClickDownloadModal'
 import { ClickOkDownloadFinish } from './ClickOkDownloadFinish'
-import { CloseOnePage } from './CloseOnePage'
+// import { CloseOnePage } from './CloseOnePage'
 import { CreateFolderToSaveXmls } from './CreateFolderToSaveXmls'
 import { GetCnpjs } from './GetCnpjs'
 import { GoesThroughCaptcha } from './GoesThroughCaptcha'
@@ -62,7 +62,7 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
 
     // Pega a URL atual pra não ter que abrir do zero o processo
     const urlActual = page.url()
-    const qtdEmpresas = 0
+    // const qtdEmpresas = 0
 
     // Percorre o array de empresas
     for (const option of optionsCnpjs) {
@@ -95,7 +95,7 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                     const months = functions.returnMonthsOfYear(year, monthInicial, yearInicial, monthFinal, yearFinal)
 
                     for (const month of months) {
-                        if (month === 12) continue // por enquanto ignora mes 12
+                        // if (month === 12) continue // por enquanto ignora mes 12
                         //  clean settings to old don't affect new process
                         settings = cleanDataObject(settings, [], ['wayCertificate', 'hourLog', 'dateHourProcessing', 'nameCompanie', 'cgceCompanie', 'modelNF', 'typeNF'])
                         const dateInicialAndFinalOfMonth = SetDateInicialAndFinalOfMonth(periodToDown, month, year)
@@ -149,6 +149,8 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                             console.log('\t17- Enviando informação que o arquivo foi baixado pra fila de salvar o processamento.')
                             await SendLastDownloadToQueue(page, settings)
 
+                            console.log('\t[Final-Empresa-Mes]')
+                            console.log('\t-------------------------------------------------')
                             // await CloseOnePage(page, 'Empresa')
                         } catch (error) { console.log(error) }
                     }

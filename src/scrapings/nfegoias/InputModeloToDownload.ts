@@ -12,8 +12,8 @@ export async function InputModeloToDownload (page: Page, settings: ISettingsNFeG
         settings.messageLog = 'InputModeloToDownload'
         settings.messageError = error
         settings.messageLogToShowUser = 'Erro ao selecionar modelo pra download das notas.'
-        console.log(`\t\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
-        console.log('\t\t-------------------------------------------------')
+        console.log(`\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
+        console.log('\t-------------------------------------------------')
 
         const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
         await treatsMessageLog.saveLog()

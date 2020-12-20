@@ -15,9 +15,10 @@ async function getQtdNotes (page: Page): Promise<number> {
 
 export async function ClickDownloadModal (page: Page, settings: ISettingsNFeGoias): Promise<number> {
     try {
-        await page.waitForTimeout(2000)
+        await page.waitForTimeout(4000)
         // await page.waitFor(2000)
         await page.waitForSelector('#dnwld-all-btn-ok')
+        await page.click('#cmpPagTds')
         const qtdNotes = await getQtdNotes(page)
         if (!qtdNotes) {
             throw 'NOT_EXIST_NOTES_TO_DOWN'
@@ -28,13 +29,13 @@ export async function ClickDownloadModal (page: Page, settings: ISettingsNFeGoia
         settings.typeLog = 'error'
         settings.messageLog = 'ClickDownloadModal'
         settings.messageError = error
-        settings.messageLogToShowUser = 'Erro ao clicar pra baixar as notas na tela suspensa que abre'
+        settings.messageLogToShowUser = 'Erro ao clicar pra baixar as notas na tela suspensa'
         if (error === 'NOT_EXIST_NOTES_TO_DOWN') {
             settings.typeLog = 'warning'
-            settings.messageLogToShowUser = 'Não há notas neste período pra download'
+            settings.messageLogToShowUser = 'Não encontrou notas na tela suspensa'
         }
-        console.log(`\t\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
-        console.log('\t\t-------------------------------------------------')
+        console.log(`\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
+        console.log('\t-------------------------------------------------')
 
         const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
         await treatsMessageLog.saveLog()

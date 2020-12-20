@@ -11,7 +11,7 @@ export async function PeriodToDownNFeGoias (settings: ISettingsNFeGoias): Promis
     const datedownmax = maxDate?.datedownmax
     let dateStart: Date
     if (!datedownmax) {
-        dateStart = subMonths(new Date(), Number(process.env.RETROACTIVE_MONTHS_TO_DOWNLOAD) || 1)
+        dateStart = subMonths(new Date(), Number(process.env.RETROACTIVE_MONTHS_TO_DOWNLOAD) || 0)
         dateStart.setDate(1)
     } else {
         dateStart = addDays(new Date(datedownmax), 1)

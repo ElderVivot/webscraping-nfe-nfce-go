@@ -41,8 +41,8 @@ export async function GoesThroughCaptcha (page: Page, settings: ISettingsNFeGoia
         settings.messageLog = 'GoesThroughCaptcha'
         settings.messageError = error
         settings.messageLogToShowUser = 'Erro ao passar pelo captcha.'
-        console.log(`\t\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
-        console.log('\t\t-------------------------------------------------')
+        console.log(`\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
+        console.log('\t-------------------------------------------------')
 
         const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
         await treatsMessageLog.saveLog()

@@ -3,15 +3,16 @@ import { Page } from 'puppeteer'
 import { ISettingsNFeGoias } from './ISettingsNFeGoias'
 import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
 
-export async function CheckIfDownloadInProgress (page: Page, settings: ISettingsNFeGoias): Promise<number> {
+export async function CheckIfDownloadInProgress (page: Page, settings: ISettingsNFeGoias): Promise<void> {
     try {
-        return new Promise(resolve => {
+        const downloadInProgress = await new Promise(resolve => {
             let quantityTimesCheckIfDownloadInProgress = 0
 
             const interval = setInterval(async () => {
                 quantityTimesCheckIfDownloadInProgress++
                 console.log(`\t\t\t- Processando à ${quantityTimesCheckIfDownloadInProgress * 5} segundos`)
                 const finishDownloadProgress = await page.evaluate(() => {
+                    const modalIsOpen = document.querySelector('.modal-body')
                     const timeInfoLoading = document.querySelector('#timer-info-loading')
                     let finishedDownload = false
                     const operationFinished: string = document.querySelector('.modal-body > .label-info-loading')?.textContent
@@ -20,7 +21,9 @@ export async function CheckIfDownloadInProgress (page: Page, settings: ISettings
                         console.log(operationFinishedSanitize)
                         if (operationFinishedSanitize.indexOf('OPERACAO CONCLUIDA')) finishedDownload = true
                     }
-
+                    if (!modalIsOpen) {
+                        return -1
+                    }
                     if (!timeInfoLoading && finishedDownload) {
                         return 1
                     } else {
@@ -33,13 +36,19 @@ export async function CheckIfDownloadInProgress (page: Page, settings: ISettings
                 }
             }, 5000)
         })
+        if (downloadInProgress === -1) {
+            throw 'MODEL_WITH_BUTTON_DOWN_IS_NOT_OPEN'
+        }
     } catch (error) {
         settings.typeLog = 'error'
         settings.messageLog = 'CheckIfDownloadInProgress'
         settings.messageError = error
         settings.messageLogToShowUser = 'Erro ao checar se o download das notas ainda está em progresso.'
-        console.log(`\t\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
-        console.log('\t\t-------------------------------------------------')
+        if (error === 'MODEL_WITH_BUTTON_DOWN_IS_NOT_OPEN') {
+            settings.messageLogToShowUser = 'Modal de download não está sendo exibido.'
+        }
+        console.log(`\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
+        console.log('\t-------------------------------------------------')
 
         const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
         await treatsMessageLog.saveLog()
