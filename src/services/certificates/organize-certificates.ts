@@ -23,7 +23,7 @@ const getPasswordOfNameFile = (file: string, passwordDefault: string): string =>
 const identifiesPasswordDefault = (word: string, file: string): string => {
     let password = ''
     const wordUpperCase = word.toUpperCase()
-    const passwordDefaults = ['SENHA=', 'SENHA-', 'SENHA']
+    const passwordDefaults = ['SENHA=', 'SENHA-', 'SENHA -', 'SENHA =', 'SENHA']
     for (const passwordDefault of passwordDefaults) {
         const positionPasswordDefault = wordUpperCase.indexOf(passwordDefault)
         if (positionPasswordDefault >= 0) {
