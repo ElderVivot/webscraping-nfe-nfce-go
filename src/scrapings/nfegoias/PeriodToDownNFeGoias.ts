@@ -22,7 +22,7 @@ export async function PeriodToDownNFeGoias (page: Page, settings: ISettingsNFeGo
 
         const dateEnd = subDays(new Date(), 2)
 
-        if (dateStart > dateEnd) {
+        if (dateStart >= dateEnd) {
             throw 'DONT_HAVE_NEW_PERIOD_TO_PROCESS'
         }
 
@@ -31,7 +31,7 @@ export async function PeriodToDownNFeGoias (page: Page, settings: ISettingsNFeGo
         }
     } catch (error) {
         settings.typeLog = 'error'
-        settings.messageLog = 'SendLastDownloadToQueue'
+        settings.messageLog = 'PeriodToDownNFeGoias'
         settings.messageError = error
         settings.messageLogToShowUser = 'Erro ao enviar pra fila o último download realizado.'
         if (error === 'DONT_HAVE_NEW_PERIOD_TO_PROCESS') {
