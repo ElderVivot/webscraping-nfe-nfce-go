@@ -74,23 +74,23 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
             settings.modelNF = modelo
             console.log(`\t5- Buscando ${settings.typeNF}`)
 
-            // Pega o período necessário pra processamento
-            let periodToDown = null
-            if (!dateStartDown && !dateEndDown) {
-                periodToDown = await PeriodToDownNFeGoias(page, settings)
-            } else {
-                periodToDown = {
-                    dateStart: new Date(zonedTimeToUtc(dateStartDown, 'America/Sao_Paulo')),
-                    dateEnd: new Date(zonedTimeToUtc(dateEndDown, 'America/Sao_Paulo'))
-                }
-            }
-            let year = periodToDown.dateStart.getFullYear()
-            const yearInicial = year
-            const yearFinal = periodToDown.dateEnd.getFullYear()
-            const monthInicial = periodToDown.dateStart.getMonth() + 1
-            const monthFinal = periodToDown.dateEnd.getMonth() + 1
-
             try {
+                // Pega o período necessário pra processamento
+                let periodToDown = null
+                if (!dateStartDown && !dateEndDown) {
+                    periodToDown = await PeriodToDownNFeGoias(page, settings)
+                } else {
+                    periodToDown = {
+                        dateStart: new Date(zonedTimeToUtc(dateStartDown, 'America/Sao_Paulo')),
+                        dateEnd: new Date(zonedTimeToUtc(dateEndDown, 'America/Sao_Paulo'))
+                    }
+                }
+                let year = periodToDown.dateStart.getFullYear()
+                const yearInicial = year
+                const yearFinal = periodToDown.dateEnd.getFullYear()
+                const monthInicial = periodToDown.dateStart.getMonth() + 1
+                const monthFinal = periodToDown.dateEnd.getMonth() + 1
+
                 while (year <= yearFinal) {
                     const months = functions.returnMonthsOfYear(year, monthInicial, yearInicial, monthFinal, yearFinal)
 
@@ -164,7 +164,7 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
         }
     }
     console.log('[Final] - Todos os dados deste navegador foram processados, fechando navegador.')
-    if (browser.isConnected()) await browser.close()
+    await browser.close()
 }
 
 // const hourLog = format(new Date(), 'yyyy-MM-dd hh:mm:ss a', { timeZone: 'America/Sao_Paulo' })
