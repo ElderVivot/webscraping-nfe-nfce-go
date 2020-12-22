@@ -44,7 +44,8 @@ class Applicattion {
             const nameCertificate = certificate.requerenteCN.split(':')[0]
             console.log(`\n*- Lendo certificado ${certificate.requerenteCN}`)
             await mainSetDefaultCertificateRegedit('https://nfe.sefaz.go.gov.br', certificate)
-            // await new Promise((resolve) => setTimeout(() => resolve('teste'), 10000))
+            // it's necessary to set certificate regedit, only await in line acima don't suficient
+            await new Promise((resolve) => setTimeout(() => resolve(''), 5000))
             try {
                 await MainNFGoias({
                     wayCertificate: fileCertificate,
