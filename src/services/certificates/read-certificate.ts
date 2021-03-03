@@ -49,7 +49,7 @@ export async function ReadCertificate (pathCertificate: string, password: string
     }
 }
 
-// ReadCertificate('C:/_temp/certificados/agm_caetano_soma123.pfx', 'soma123').then(_ => console.log(_))
+ReadCertificate('C:/certificados/bahrem_bar_19162372000142_senha_bahrem2021.pfx', 'bahrem2021').then(_ => console.log(_))
 
 // pem.readPkcs12(wayPfx, { p12Password: 'soma123' }, (err, cert) => {
 //     if (err) console.log(err)

@@ -33,7 +33,7 @@ export async function GoesThroughCaptcha (page: Page, settings: ISettingsNFeGoia
 
         await page.evaluate(`document.getElementById("g-recaptcha-response").innerHTML="${response}";`)
         await Promise.all([
-            page.waitForNavigation(),
+            page.waitForNavigation({ waitUntil: 'networkidle0', timeout: 500000 }),
             page.click("button[form='filtro']")
         ])
     } catch (error) {
