@@ -16,11 +16,9 @@ async function getQtdNotes (page: Page): Promise<number> {
 async function checkIsDisabled (page: Page): Promise<boolean> {
     try {
         const textDisabled: string = await page.$eval('#cmpPagTds', element => element.getAttribute('disabled'))
-        if (textDisabled.toUpperCase() === 'DISABLED') {
-            return true
-        } else {
-            return false
-        }
+        if (!textDisabled) return false
+        if (textDisabled.toUpperCase() === 'DISABLED') return true
+        return false
     } catch (error) {
         return false
     }
@@ -31,10 +29,8 @@ export async function ClickDownloadModal (page: Page, settings: ISettingsNFeGoia
         await page.waitForTimeout(4000)
         // await page.waitFor(2000)
         await page.waitForSelector('#dnwld-all-btn-ok')
-        const isDisabled = checkIsDisabled(page)
-        if (isDisabled) {
-            throw 'MORE_10000_NOTES_TO_DOWN'
-        }
+        const isDisabled = await checkIsDisabled(page)
+        if (isDisabled) throw 'MORE_10000_NOTES_TO_DOWN'
         await page.click('#cmpPagTds')
         const qtdNotes = await getQtdNotes(page)
         // if (!qtdNotes) {
