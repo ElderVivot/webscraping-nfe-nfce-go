@@ -20,6 +20,7 @@ interface IHTMLElement extends Element {
 export async function SendLastDownloadToQueue (page: Page, settings: ISettingsNFeGoias): Promise<void> {
     try {
         await page.goto('chrome://downloads/')
+        await page.waitForTimeout(3000)
 
         const lastDownload = await page.evaluate(() => {
             const manager: IHTMLElement = document.querySelector('downloads-manager')
