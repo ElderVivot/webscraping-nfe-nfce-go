@@ -29,6 +29,8 @@ const mountFolder = (settings: ISettingsNFeGoias, folder: string) => {
             folderComplete += settings.typeLog ? `${settings.typeLog}/` : ''
         } else if (field === 'nameCompanieWithCnpj') {
             folderComplete += settings.nameCompanie && settings.cgceCompanie ? `${nameCompanie} - ${settings.cgceCompanie}/` : ''
+        } else if (field === 'cgce') {
+            folderComplete += settings.cgceCompanie ? `${settings.cgceCompanie}/` : ''
         } else if (field === 'nameCompanieWithCodeCompanie') {
             folderComplete += settings.nameCompanie && settings.codeCompanie ? `${nameCompanie} - ${settings.codeCompanie}/` : `${nameCompanie} - ${settings.cgceCompanie}/`
         } else if (field === 'year') {
