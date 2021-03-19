@@ -48,7 +48,7 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
         executablePath: path.join('C:', 'Program Files (x86)', 'Google', 'Chrome', 'Application', 'chrome.exe')
     })
 
-    const { dateStartDown, dateEndDown } = settings
+    const { dateStartDown, dateEndDown, modelNF, cgceCompanie } = settings
 
     console.log('1- Abrindo nova página')
     const page = await browser.newPage()
@@ -66,12 +66,19 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
 
     // Percorre o array de empresas
     for (const option of optionsCnpjs) {
+        // Esta linha analisa se é o cnpj esperado, nos casos de reprocessamento pra correção de erros
+        if (cgceCompanie && option.value !== cgceCompanie) continue
+
         settings.cgceCompanie = option.value
         console.log(`4- Abrindo CNPJ ${option.label}`)
 
         for (const modelo of modelosNFe) {
+            // Esta linha analisa se é o modelo de nota esperado, nos casos de reprocessamento pra correção de erros
+            if (modelNF && modelo !== modelNF) continue
+
             settings.typeNF = modelo === '55' ? 'NF-e' : 'NFC-e'
             settings.modelNF = modelo
+
             console.log(`\t5- Buscando ${settings.typeNF}`)
 
             try {
@@ -97,7 +104,7 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                     for (const month of months) {
                         // if (month === 12) continue // por enquanto ignora mes 12
                         //  clean settings to old don't affect new process
-                        settings = cleanDataObject(settings, [], ['wayCertificate', 'hourLog', 'dateHourProcessing', 'nameCompanie', 'cgceCompanie', 'modelNF', 'typeNF'])
+                        settings = cleanDataObject(settings, [], ['id', 'wayCertificate', 'hourLog', 'dateHourProcessing', 'nameCompanie', 'cgceCompanie', 'modelNF', 'typeNF', 'qtdTimesReprocessed'])
                         const dateInicialAndFinalOfMonth = SetDateInicialAndFinalOfMonth(periodToDown, month, year)
                         const monthSring = functions.zeroLeft(month.toString(), 2)
                         console.log(`\t6- Iniciando processamento do mês ${monthSring}/${year}`)
