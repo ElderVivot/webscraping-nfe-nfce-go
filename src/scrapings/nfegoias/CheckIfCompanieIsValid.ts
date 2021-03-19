@@ -27,10 +27,10 @@ export async function CheckIfCompanieIsValid (page: Page, settings: ISettingsNFe
         if (companiesOnlyActive && !settings.codeCompanie) {
             throw 'COMPANIE_NOT_CLIENT_THIS_ACCOUNTING_OFFICE'
         }
-        if (companie.uf !== 'GO') {
+        if (companiesOnlyActive && companie.uf !== 'GO') {
             throw 'COMPANIE_IS_NOT_STATE_GO'
         }
-        if (!companie.inscricaoEstadual) {
+        if (companiesOnlyActive && !companie.inscricaoEstadual) {
             throw 'COMPANIE_DONT_HAVE_INSCRICAO_ESTADUAL'
         }
         return settings
