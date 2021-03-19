@@ -1,13 +1,14 @@
 import express from 'express'
 
-import NFSeGoiania from './jobs/NFeNFCeGO'
-import NFSeGoianiaReprocessErrors from './jobs/NFeNFCeGOReprocessErrors'
+import { jobDay1, jobDay15 } from './jobs/NFeNFCeGO'
+import NFeNFCeGOReprocessErrors from './jobs/NFeNFCeGOReprocessErrors'
 
 const app = express()
 
 async function process () {
-    NFSeGoiania.start()
-    NFSeGoianiaReprocessErrors.start()
+    jobDay1.start()
+    jobDay15.start()
+    NFeNFCeGOReprocessErrors.start()
 }
 
 process().then(_ => console.log())

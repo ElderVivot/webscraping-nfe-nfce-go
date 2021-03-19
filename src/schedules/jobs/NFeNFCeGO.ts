@@ -7,8 +7,8 @@ async function processNotes () {
     await applicattion.process()
 }
 
-const job = new CronJob(
-    '00 19 * * *',
+const jobDay15 = new CronJob(
+    '0 22 15 * *',
     async function () {
         await processNotes()
     },
@@ -16,4 +16,13 @@ const job = new CronJob(
     true
 )
 
-export default job
+const jobDay1 = new CronJob(
+    '0 4 1 * *',
+    async function () {
+        await processNotes()
+    },
+    null,
+    true
+)
+
+export { jobDay15, jobDay1 }
