@@ -6,6 +6,7 @@ import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
 
 export async function CheckIfSemResultados (page: Page, settings: ISettingsNFeGoias): Promise<void> {
     try {
+        await page.waitForTimeout(2000)
         const semResultadoOriginal: string = await page.$eval('#message-containter > div:nth-child(1)', element => element.textContent)
         const semResultado = semResultadoOriginal ? treateTextField(semResultadoOriginal) : ''
         if (semResultado.indexOf('SEM RESULTADO') >= 0) {
