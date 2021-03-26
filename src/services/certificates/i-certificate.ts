@@ -4,5 +4,6 @@ export interface ICertifate {
     notAfter: Date
     requerenteCN: string
     requerenteOU: string
-    typeCgceCertificate: string
+    typeCgceCertificate: string,
+    nameCertificate?: string
 }

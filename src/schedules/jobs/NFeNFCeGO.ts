@@ -3,8 +3,12 @@ import { CronJob } from 'cron'
 import NFeNFCeGO from '../../scrapings/nfegoias/index'
 
 async function processNotes () {
-    const applicattion = new NFeNFCeGO()
-    await applicattion.process()
+    try {
+        const applicattion = new NFeNFCeGO()
+        await applicattion.process()
+    } catch (error) {
+        console.log(`- Erro ao processar baixa de notas ${error}`)
+    }
 }
 
 const jobDay15 = new CronJob(
