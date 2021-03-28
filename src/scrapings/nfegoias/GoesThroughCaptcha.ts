@@ -25,8 +25,8 @@ async function captcha () {
 
 export async function GoesThroughCaptcha (page: Page, settings: ISettingsNFeGoias): Promise<void> {
     try {
-        // time out 1.5 minutes if captcha not return results
-        const response = await Promise.race([captcha(), promiseTimeOut(90000)])
+        // time out 3 minutes if captcha not return results
+        const response = await Promise.race([captcha(), promiseTimeOut(180000)])
         if (response === 'TIME_EXCEED') {
             throw 'TIME EXCEED - GOES THROUGH CAPTCHA'
         }

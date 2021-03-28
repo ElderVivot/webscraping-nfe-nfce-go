@@ -1,5 +1,5 @@
 import { zonedTimeToUtc } from 'date-fns-tz'
-import path from 'path'
+// import path from 'path'
 // import puppeteer from 'puppeteer-core'
 import puppeteer from 'puppeteer'
 // import puppeteer from 'puppeteer-extra'
@@ -43,9 +43,9 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
     const browser = await puppeteer.launch({
         ignoreHTTPSErrors: true,
         headless: false,
-        args: ['--start-maximized'],
+        args: ['--start-maximized']
         // devtools: true,
-        executablePath: path.join('C:', 'Program Files (x86)', 'Google', 'Chrome', 'Application', 'chrome.exe')
+        // executablePath: path.join('C:', 'Program Files (x86)', 'Google', 'Chrome', 'Application', 'chrome.exe')
     })
 
     const { dateStartDown, dateEndDown, modelNF, cgceCompanie } = settings
