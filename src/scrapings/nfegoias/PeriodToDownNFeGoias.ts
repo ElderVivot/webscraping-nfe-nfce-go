@@ -7,20 +7,37 @@ import IPeriodToDownNotes from '../../models/IPeriodToDownNotes'
 import { ISettingsNFeGoias } from './ISettingsNFeGoias'
 import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
 
+const getDateStart = (datedownmax: any): Date => {
+    let dateStart: Date
+    if (!datedownmax) {
+        dateStart = subMonths(new Date(), Number(process.env.RETROACTIVE_MONTHS_TO_DOWNLOAD) || 0)
+        dateStart.setDate(1)
+    } else {
+        dateStart = addDays(new Date(datedownmax), 1)
+    }
+    return dateStart
+}
+
+const getDateEnd = (): Date => {
+    const today = new Date()
+    let dateEnd = subDays(today, 1)
+    if (today.getDate() > 15) {
+        dateEnd = new Date(today.getFullYear(), today.getMonth(), 0)
+    } else {
+        dateEnd = today
+        dateEnd.setDate(15)
+    }
+    return dateEnd
+}
+
 export async function PeriodToDownNFeGoias (page: Page, settings: ISettingsNFeGoias): Promise<IPeriodToDownNotes> {
     try {
         const getMaxDateDownNfeNfce = new GetMaxDateDownNfeNfce()
         const maxDate = await getMaxDateDownNfeNfce.getMaxDateDown(`?cgceCompanie=${settings.cgceCompanie}&modelNF=${settings.modelNF}`)
         const datedownmax = maxDate?.datedownmax
-        let dateStart: Date
-        if (!datedownmax) {
-            dateStart = subMonths(new Date(), Number(process.env.RETROACTIVE_MONTHS_TO_DOWNLOAD) || 0)
-            dateStart.setDate(1)
-        } else {
-            dateStart = addDays(new Date(datedownmax), 1)
-        }
 
-        const dateEnd = subDays(new Date(), 1)
+        const dateStart = getDateStart(datedownmax)
+        const dateEnd = getDateEnd()
 
         if (dateStart >= dateEnd) {
             throw 'DONT_HAVE_NEW_PERIOD_TO_PROCESS'
