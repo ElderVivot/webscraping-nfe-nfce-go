@@ -18,6 +18,7 @@ import { ClickOkDownloadFinish } from './ClickOkDownloadFinish'
 // import { CloseOnePage } from './CloseOnePage'
 import { CreateFolderToSaveXmls } from './CreateFolderToSaveXmls'
 import { GetCnpjs } from './GetCnpjs'
+// import { GetQuantityNotes } from './GetQuantityNotes'
 import { GoesThroughCaptcha } from './GoesThroughCaptcha'
 import { InputModeloToDownload } from './InputModeloToDownload'
 import { InputPeriodToDownload } from './InputPeriodToDownload'
@@ -135,6 +136,8 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
 
                             console.log('\t11- Verificando se há notas no filtro passado')
                             await CheckIfSemResultados(page, settings)
+
+                            // const qtdNotesGlobal = await GetQuantityNotes(page, settings)
 
                             console.log('\t12- Clicando pra baixar todos os arquivos')
                             await ClickDownloadAll(page, settings)
