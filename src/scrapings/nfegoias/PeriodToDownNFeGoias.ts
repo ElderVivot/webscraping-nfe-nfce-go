@@ -21,7 +21,7 @@ const getDateStart = (datedownmax: any): Date => {
 const getDateEnd = (): Date => {
     const today = new Date()
     let dateEnd = subDays(today, 1)
-    if (today.getDate() > 15) {
+    if (today.getDate() <= 15) {
         dateEnd = new Date(today.getFullYear(), today.getMonth(), 0)
     } else {
         dateEnd = today
