@@ -28,7 +28,14 @@ import { PeriodToDownNFeGoias } from './PeriodToDownNFeGoias'
 import { SendLastDownloadToQueue } from './SendLastDownloadToQueue'
 import { SetDateInicialAndFinalOfMonth } from './SetDateInicialAndFinalOfMonth'
 
-const modelosNFe = ['55', '65']
+const modelosNFe = ['55', '65', '57']
+
+function typeNF (modelo: string): string {
+    if (modelo === '55') return 'NF-e'
+    else if (modelo === '57') return 'CT-e'
+    else if (modelo === '65') return 'NFC-e'
+    else return 'DESCONHECIDO'
+}
 
 export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<void> {
     // puppeteer.use(
@@ -77,7 +84,7 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
             // Esta linha analisa se é o modelo de nota esperado, nos casos de reprocessamento pra correção de erros
             if (modelNF && modelo !== modelNF) continue
 
-            settings.typeNF = modelo === '55' ? 'NF-e' : 'NFC-e'
+            settings.typeNF = typeNF(modelo)
             settings.modelNF = modelo
 
             console.log(`\t5- Buscando ${settings.typeNF}`)
