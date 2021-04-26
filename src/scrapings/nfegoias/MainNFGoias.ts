@@ -95,6 +95,7 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                 if (!dateStartDown && !dateEndDown) {
                     periodToDown = await PeriodToDownNFeGoias(page, settings)
                 } else {
+                    settings.id = null
                     periodToDown = {
                         dateStart: new Date(zonedTimeToUtc(dateStartDown, 'America/Sao_Paulo')),
                         dateEnd: new Date(zonedTimeToUtc(dateEndDown, 'America/Sao_Paulo'))

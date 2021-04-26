@@ -40,8 +40,8 @@ async function processNotes () {
     }
 }
 
-const job = new CronJob(
-    '0 */3 * * *',
+const job1 = new CronJob(
+    '0 6 * * *',
     async function () {
         try {
             await processNotes()
@@ -53,6 +53,45 @@ const job = new CronJob(
     true
 )
 
-export default job
+const job2 = new CronJob(
+    '0 10 * * *',
+    async function () {
+        try {
+            await processNotes()
+        } catch (error) {
+            console.log(`- Erro ao reprocessar erros: ${error}`)
+        }
+    },
+    null,
+    true
+)
+
+const job3 = new CronJob(
+    '0 14 * * *',
+    async function () {
+        try {
+            await processNotes()
+        } catch (error) {
+            console.log(`- Erro ao reprocessar erros: ${error}`)
+        }
+    },
+    null,
+    true
+)
+
+const job4 = new CronJob(
+    '0 18 * * *',
+    async function () {
+        try {
+            await processNotes()
+        } catch (error) {
+            console.log(`- Erro ao reprocessar erros: ${error}`)
+        }
+    },
+    null,
+    true
+)
+
+export { job1, job2, job3, job4 }
 
 // processNotes().then(_ => console.log(_))

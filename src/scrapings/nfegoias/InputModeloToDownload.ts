@@ -6,7 +6,7 @@ import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
 export async function InputModeloToDownload (page: Page, settings: ISettingsNFeGoias): Promise<void> {
     try {
         await page.waitForSelector('#cmpModelo')
-        await page.select('#cmpModelo', settings.typeNF === 'NF-e' ? '55' : '65')
+        await page.select('#cmpModelo', settings.modelNF)
     } catch (error) {
         settings.typeLog = 'error'
         settings.messageLog = 'InputModeloToDownload'
