@@ -12,6 +12,7 @@ import { ChangeCnpj } from './ChangeCnpj'
 import { CheckIfCompanieIsValid } from './CheckIfCompanieIsValid'
 import { CheckIfDownloadInProgress } from './CheckIfDownloadInProgress'
 import { CheckIfSemResultados } from './CheckIfSemResultados'
+import { ChecksIfFetchInCompetence } from './ChecksIfFetchInCompetence'
 import { ClickDownloadAll } from './ClickDownloadAll'
 import { ClickDownloadModal } from './ClickDownloadModal'
 import { ClickOkDownloadFinish } from './ClickOkDownloadFinish'
@@ -28,7 +29,7 @@ import { PeriodToDownNFeGoias } from './PeriodToDownNFeGoias'
 import { SendLastDownloadToQueue } from './SendLastDownloadToQueue'
 import { SetDateInicialAndFinalOfMonth } from './SetDateInicialAndFinalOfMonth'
 
-const modelosNFe = ['55', '65', '57']
+const modelosNFe = ['55', '65'/*, '57' */]
 
 function typeNF (modelo: string): string {
     if (modelo === '55') return 'NF-e'
@@ -95,7 +96,6 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                 if (!dateStartDown && !dateEndDown) {
                     periodToDown = await PeriodToDownNFeGoias(page, settings)
                 } else {
-                    settings.id = null
                     periodToDown = {
                         dateStart: new Date(zonedTimeToUtc(dateStartDown, 'America/Sao_Paulo')),
                         dateEnd: new Date(zonedTimeToUtc(dateEndDown, 'America/Sao_Paulo'))
@@ -124,10 +124,11 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                         settings.month = monthSring
                         settings.entradasOrSaidas = 'Saidas'
 
-                        console.log('\t7- Checando se é uma empresa válida pra este período.')
-                        settings = await CheckIfCompanieIsValid(page, settings)
-
                         try {
+                            await ChecksIfFetchInCompetence(page, settings)
+
+                            console.log('\t7- Checando se é uma empresa válida pra este período.')
+                            settings = await CheckIfCompanieIsValid(page, settings)
                             // const pageMonth = await browser.newPage()
                             // await pageMonth.setViewport({ width: 0, height: 0 })
                             await page.goto(urlActual)

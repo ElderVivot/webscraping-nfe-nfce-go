@@ -2,7 +2,7 @@ import 'dotenv/config'
 import { subMonths, subDays, addDays } from 'date-fns'
 import { Page } from 'puppeteer'
 
-import GetMaxDateDownNfeNfce from '../../controllers/GetMaxDateDownNfeNfce'
+// import GetMaxDateDownNfeNfce from '../../controllers/GetMaxDateDownNfeNfce'
 import IPeriodToDownNotes from '../../models/IPeriodToDownNotes'
 import { ISettingsNFeGoias } from './ISettingsNFeGoias'
 import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
@@ -32,9 +32,9 @@ const getDateEnd = (): Date => {
 
 export async function PeriodToDownNFeGoias (page: Page, settings: ISettingsNFeGoias): Promise<IPeriodToDownNotes> {
     try {
-        const getMaxDateDownNfeNfce = new GetMaxDateDownNfeNfce()
-        const maxDate = await getMaxDateDownNfeNfce.getMaxDateDown(`?cgceCompanie=${settings.cgceCompanie}&modelNF=${settings.modelNF}`)
-        const datedownmax = maxDate?.datedownmax
+        // const getMaxDateDownNfeNfce = new GetMaxDateDownNfeNfce()
+        // const maxDate = await getMaxDateDownNfeNfce.getMaxDateDown(`?cgceCompanie=${settings.cgceCompanie}&modelNF=${settings.modelNF}`)
+        const datedownmax = null // maxDate?.datedownmax
 
         const dateStart = getDateStart(datedownmax)
         const dateEnd = getDateEnd()

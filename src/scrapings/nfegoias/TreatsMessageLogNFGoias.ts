@@ -19,32 +19,35 @@ export class TreatsMessageLogNFeGoias {
         this.noClosePage = noClosePage
     }
 
-    async saveLog (): Promise<void> {
+    async saveLog (saveInDB = true): Promise<void> {
         // this.pathImg = await createFolderToSaveData(this.settings)
         // this.pathImg = path.resolve(this.pathImg, `${this.settings.messageLog}.png`)
         // await this.page.screenshot({ path: this.pathImg, fullPage: true })
         if (!this.noClosePage) await this.page.close()
         if (this.browser) await this.browser.close()
 
-        const saveLogNfeNfceGO = new SaveLogNfeNfceGO()
-        await saveLogNfeNfceGO.saveLog({
-            id: this.settings.id,
-            wayCertificate: this.settings.wayCertificate,
-            hourLog: this.settings.hourLog,
-            typeLog: this.settings.typeLog || 'error',
-            messageLog: this.settings.messageLog || '',
-            messageError: this.settings.messageError,
-            messageLogToShowUser: this.settings.messageLogToShowUser,
-            urlImageDown: '',
-            codeCompanie: this.settings.codeCompanie,
-            nameCompanie: this.settings.nameCompanie,
-            cgceCompanie: this.settings.cgceCompanie,
-            modelNF: this.settings.modelNF || '',
-            dateStartDown: this.settings.dateStartDown,
-            dateEndDown: this.settings.dateEndDown,
-            qtdNotesDown: this.settings.qtdTimesReprocessed,
-            qtdTimesReprocessed: this.settings.qtdTimesReprocessed
-        })
+        if (saveInDB) {
+            console.log('salvando')
+            const saveLogNfeNfceGO = new SaveLogNfeNfceGO()
+            await saveLogNfeNfceGO.saveLog({
+                id: this.settings.id,
+                wayCertificate: this.settings.wayCertificate,
+                hourLog: this.settings.hourLog,
+                typeLog: this.settings.typeLog || 'error',
+                messageLog: this.settings.messageLog || '',
+                messageError: this.settings.messageError,
+                messageLogToShowUser: this.settings.messageLogToShowUser,
+                urlImageDown: '',
+                codeCompanie: this.settings.codeCompanie,
+                nameCompanie: this.settings.nameCompanie,
+                cgceCompanie: this.settings.cgceCompanie,
+                modelNF: this.settings.modelNF || '',
+                dateStartDown: this.settings.dateStartDown,
+                dateEndDown: this.settings.dateEndDown,
+                qtdNotesDown: this.settings.qtdTimesReprocessed,
+                qtdTimesReprocessed: this.settings.qtdTimesReprocessed
+            })
+        }
 
         throw `[${this.settings.typeLog}]-${this.settings.messageLog}-${this.settings.messageError}`
     }
