@@ -29,7 +29,7 @@ import { PeriodToDownNFeGoias } from './PeriodToDownNFeGoias'
 import { SendLastDownloadToQueue } from './SendLastDownloadToQueue'
 import { SetDateInicialAndFinalOfMonth } from './SetDateInicialAndFinalOfMonth'
 
-const modelosNFe = ['55', '65'/*, '57' */]
+const modelosNFe = ['55', '65', '57']
 
 function typeNF (modelo: string): string {
     if (modelo === '55') return 'NF-e'
