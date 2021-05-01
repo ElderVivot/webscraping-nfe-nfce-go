@@ -58,6 +58,7 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
     })
 
     const { dateStartDown, dateEndDown, modelNF, cgceCompanie } = settings
+    settings.reprocessingFetchErrors = !!(dateStartDown && dateEndDown)
 
     console.log('1- Abrindo nova página')
     const page = await browser.newPage()
@@ -93,7 +94,7 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
             try {
                 // Pega o período necessário pra processamento
                 let periodToDown = null
-                if (!dateStartDown && !dateEndDown) {
+                if (!settings.reprocessingFetchErrors) {
                     periodToDown = await PeriodToDownNFeGoias(page, settings)
                 } else {
                     periodToDown = {
@@ -113,19 +114,20 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                     for (const month of months) {
                         // if (month === 12) continue // por enquanto ignora mes 12
                         //  clean settings to old don't affect new process
-                        settings = cleanDataObject(settings, [], ['id', 'wayCertificate', 'hourLog', 'dateHourProcessing', 'nameCompanie', 'cgceCompanie', 'modelNF', 'typeNF', 'qtdTimesReprocessed'])
-                        const dateInicialAndFinalOfMonth = SetDateInicialAndFinalOfMonth(periodToDown, month, year)
                         const monthSring = functions.zeroLeft(month.toString(), 2)
                         console.log(`\t6- Iniciando processamento do mês ${monthSring}/${year}`)
-
-                        settings.dateStartDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.inicialDate, 'America/Sao_Paulo')))} 03:00:00 AM`
-                        settings.dateEndDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.finalDate, 'America/Sao_Paulo')))} 03:00:00 AM`
-                        settings.year = year
-                        settings.month = monthSring
-                        settings.entradasOrSaidas = 'Saidas'
+                        settings = cleanDataObject(settings, [], ['id', 'wayCertificate', 'hourLog', 'dateHourProcessing', 'nameCompanie', 'cgceCompanie', 'modelNF', 'typeNF', 'qtdTimesReprocessed', 'reprocessingFetchErrors'])
 
                         try {
-                            await ChecksIfFetchInCompetence(page, settings)
+                            const dateInicialAndFinalOfMonth = await SetDateInicialAndFinalOfMonth(page, settings, periodToDown, month, year)
+
+                            settings.dateStartDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.inicialDate, 'America/Sao_Paulo')))} 03:00:00 AM`
+                            settings.dateEndDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.finalDate, 'America/Sao_Paulo')))} 03:00:00 AM`
+                            settings.year = year
+                            settings.month = monthSring
+                            settings.entradasOrSaidas = 'Saidas'
+
+                            if (!settings.reprocessingFetchErrors) { await ChecksIfFetchInCompetence(page, settings) }
 
                             console.log('\t7- Checando se é uma empresa válida pra este período.')
                             settings = await CheckIfCompanieIsValid(page, settings)

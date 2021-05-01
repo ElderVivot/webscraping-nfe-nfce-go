@@ -27,7 +27,6 @@ export class TreatsMessageLogNFeGoias {
         if (this.browser) await this.browser.close()
 
         if (saveInDB) {
-            console.log('salvando')
             const saveLogNfeNfceGO = new SaveLogNfeNfceGO()
             await saveLogNfeNfceGO.saveLog({
                 id: this.settings.id,

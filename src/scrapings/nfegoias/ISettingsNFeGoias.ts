@@ -23,5 +23,6 @@ export interface ISettingsNFeGoias {
     year?: number,
     month?: string,
     qtdNotes?: number,
-    qtdTimesReprocessed?: number
+    qtdTimesReprocessed?: number,
+    reprocessingFetchErrors?: boolean
 }
