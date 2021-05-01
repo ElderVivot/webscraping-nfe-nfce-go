@@ -42,7 +42,6 @@ export async function SetDateInicialAndFinalOfMonth (page: Page, settings: ISett
                 finalDate = daysInitialAndFinalOfMonth.dateFinal
             }
         }
-        console.log(initialDate, finalDate)
 
         return {
             inicialDate: functions.convertDateToString(initialDate),
