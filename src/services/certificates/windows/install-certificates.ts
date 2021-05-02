@@ -1,4 +1,5 @@
 import { exec } from 'child_process'
+import fs from 'fs'
 import path from 'path'
 import util from 'util'
 
@@ -7,16 +8,25 @@ import { listFiles } from '../../../utils/get-list-files-of-folder'
 const execAsync = util.promisify(exec)
 
 export async function installCertificate (fileCertificate: string): Promise<void> {
-    const extensionFile = path.extname(fileCertificate)
-    const nameFileOriginal = path.basename(fileCertificate)
-    const nameFileOriginalSplit = nameFileOriginal.split('-')
-    const password = nameFileOriginalSplit[1].replace(extensionFile, '')
-    const { stdout, stderr } = await execAsync(`certutil -f -user -p ${password} -importPFX My "${fileCertificate}"`)
-    if (stdout) {
-        console.log(`- Certificado ${nameFileOriginalSplit[0]} instalado com sucesso`)
-    }
-    if (stderr) {
-        console.log('- Erro ao instalar certificado: ', stderr)
+    try {
+        const pathInstallCertificate = path.resolve(__dirname, 'install-certificate.ps1')
+
+        const extensionFile = path.extname(fileCertificate)
+        const nameFileOriginal = path.basename(fileCertificate)
+        const nameFileOriginalSplit = nameFileOriginal.split('-')
+        const password = nameFileOriginalSplit[1].replace(extensionFile, '')
+        const textCommand = `certutil -f -user -p ${password} -importPFX My "${fileCertificate}"`
+
+        fs.writeFile(
+            pathInstallCertificate,
+            textCommand,
+            error => {
+                if (error) console.log(error)
+            }
+        )
+        await execAsync(`powershell -Command "Start-Process powershell -ArgumentList '-noprofile -file ${pathInstallCertificate}' -Verb RunAs`)
+    } catch (error) {
+        console.log(error)
     }
 }
 
