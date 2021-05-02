@@ -22,6 +22,8 @@ exit`
         }
     )
     await execAsync(`powershell -Command "Start-Process powershell -ArgumentList '-noprofile -file ${pathSetDefaultCertificateRegedit}' -Verb RunAs`)
+    // it's necessary to set certificate regedit, only await in line acima don't suficient
+    await new Promise((resolve) => setTimeout(() => resolve(''), 5000))
 }
 
 // mainSetDefaultCertificateRegedit('https://nfe.sefaz.go.gov.br', {

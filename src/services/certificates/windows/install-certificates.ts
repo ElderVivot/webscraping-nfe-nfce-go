@@ -25,8 +25,10 @@ export async function installCertificate (fileCertificate: string): Promise<void
             }
         )
         await execAsync(`powershell -Command "Start-Process powershell -ArgumentList '-noprofile -file ${pathInstallCertificate}' -Verb RunAs`)
+        // it's necessary to set certificate regedit, only await in line acima don't suficient
+        await new Promise((resolve) => setTimeout(() => resolve(''), 5000))
     } catch (error) {
-        console.log(error)
+        console.log('Error to install-certificate: ' + error)
     }
 }
 
