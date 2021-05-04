@@ -1,5 +1,6 @@
 import { Page } from 'puppeteer'
 
+import { promiseTimeOut } from '../../utils/promise-timeout'
 import { initiateCaptchaRequest, pollForRequestResults } from '../2captcha'
 import { ISettingsNFeGoias } from './ISettingsNFeGoias'
 import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
@@ -7,14 +8,6 @@ import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
 const siteDetails = {
     sitekey: '6LfTFzIUAAAAAKINyrQ9X5LPg4W3iTbyyYKzeUd3',
     pageurl: 'https://nfe.sefaz.go.gov.br/nfeweb/sites/nfe/consulta-publica'
-}
-
-function promiseTimeOut (tempo: number) {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve('TIME_EXCEED')
-        }, tempo)
-    })
 }
 
 async function captcha () {

@@ -1,11 +1,11 @@
 import { format } from 'date-fns-tz'
-import { tmpdir } from 'os'
+// import { tmpdir } from 'os'
 import path from 'path'
 
 import 'dotenv/config'
 import { OrganizeCertificates } from '../../services/certificates/organize-certificates'
 import { prepareCertificateRegedit } from '../../services/certificates/windows/prepare-certificate-regedit'
-import { DeleteFolder } from '../../services/delete-folders'
+// import { DeleteFolder } from '../../services/delete-folders'
 import { listFiles } from '../../utils/get-list-files-of-folder'
 import { MainNFGoias } from './MainNFGoias'
 
@@ -37,8 +37,8 @@ class Applicattion {
                 // it's necessary to close chromiumm withoud error
                 await new Promise((resolve) => setTimeout(() => resolve(''), 5000))
 
-                console.log('*- Deletando pastas com o nome puppeteer_dev_chrome do %temp% do user')
-                await DeleteFolder(tmpdir(), 'puppeteer_dev_chrome', true)
+                // console.log('*- Deletando pastas com o nome puppeteer_dev_chrome do %temp% do user')
+                // await DeleteFolder(tmpdir(), 'puppeteer_dev_chrome', true)
             } catch (error) {
                 console.log(`*- Erro ao processar certificado ${fileCertificate}. O erro é ${error}`)
             }
