@@ -40,9 +40,12 @@ async function downloadInProgress (page: Page): Promise<string> {
 
 export async function CheckIfDownloadInProgress (page: Page, settings: ISettingsNFeGoias): Promise<void> {
     try {
-        const downloadProgress = Promise.race([downloadInProgress(page), promiseTimeOut(1200000)])
+        const downloadProgress = await Promise.race([downloadInProgress(page), promiseTimeOut(1200000)])
         if (downloadProgress === 'TIME_EXCEED') {
-            throw 'TIME EXCEED - DOWNLOAD PROGRESS'
+            throw 'TIME_EXCEED_DOWNLOAD_PROGRESS'
+        }
+        if (downloadProgress === '-1') {
+            throw 'MODEL_WITH_BUTTON_DOWN_IS_NOT_OPEN'
         }
     } catch (error) {
         settings.typeLog = 'error'
@@ -51,6 +54,9 @@ export async function CheckIfDownloadInProgress (page: Page, settings: ISettings
         settings.messageLogToShowUser = 'Erro ao checar se o download das notas ainda está em progresso.'
         if (error === 'MODEL_WITH_BUTTON_DOWN_IS_NOT_OPEN') {
             settings.messageLogToShowUser = 'Modal de download não está sendo exibido.'
+        }
+        if (error === 'TIME_EXCEED_DOWNLOAD_PROGRESS') {
+            settings.messageLogToShowUser = 'Limete excedido pra checagem se o download ainda está em progresso.'
         }
         console.log(`\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
         console.log('\t-------------------------------------------------')
