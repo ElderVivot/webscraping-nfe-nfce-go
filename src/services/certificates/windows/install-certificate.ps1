@@ -1,1 +1,0 @@
-certutil -f -user -p mega -importPFX My "C:\certificados-processados\ok\MARISTA ALIMENTOS EIRELI14437943000190-mega.pfx"

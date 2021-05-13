@@ -4,4 +4,4 @@ dist/
 logs/
 test.*
 *.log
-set-default-certificate-regedit.ps1
+*.ps1
