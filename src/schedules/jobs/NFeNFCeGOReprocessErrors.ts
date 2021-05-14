@@ -1,11 +1,9 @@
 import { CronJob } from 'cron'
 import { format } from 'date-fns-tz'
-// import { tmpdir } from 'os'
 
 import GetLogNfeNfceErrors from '../../controllers/GetLogNfeNfceErrors'
-import { MainNFGoias } from '../../scrapings/nfegoias/MainNFGoias'
-import { prepareCertificateRegedit } from '../../services/certificates/windows/prepare-certificate-regedit'
-// import { DeleteFolder } from '../../services/delete-folders'
+import { scrapingNotes } from '../../queues/lib/ScrapingNotes'
+import { ISettingsNFeGoias } from '../../scrapings/nfegoias/ISettingsNFeGoias'
 
 async function processNotes () {
     const getLogNfeNfceErrors = new GetLogNfeNfceErrors()
@@ -16,23 +14,22 @@ async function processNotes () {
             const hourLog = format(new Date(), 'yyyy-MM-dd hh:mm:ss a', { timeZone: 'America/Sao_Paulo' })
 
             try {
-                const certificate = await prepareCertificateRegedit(log.wayCertificate)
-
-                await MainNFGoias({
+                const settings: ISettingsNFeGoias = {
                     id: log.id,
                     dateHourProcessing: hourLogToCreateFolder,
                     hourLog: hourLog,
                     wayCertificate: log.wayCertificate,
                     cgceCompanie: log.cgceCompanie,
-                    nameCompanie: certificate.nameCertificate,
                     modelNF: log.modelNF,
                     qtdTimesReprocessed: log.qtdTimesReprocessed,
                     dateStartDown: log.dateStartDown,
                     dateEndDown: log.dateEndDown
+                }
+                await scrapingNotes.add({
+                    settings
                 })
 
-                // console.log('*- Deletando pastas com o nome puppeteer_dev_chrome do %temp% do user')
-                // await DeleteFolder(tmpdir(), 'puppeteer_dev_chrome', true)
+                console.log(`*- Reprocessando scraping ${settings.id} referente ao certificado ${settings.wayCertificate} modelo periodo ${settings.dateStartDown} a ${settings.dateEndDown} modelo ${settings.modelNF}`)
             } catch (error) {
                 console.log(`*- Erro ao processar certificado ${log.wayCertificate}. O erro é ${error}`)
             }

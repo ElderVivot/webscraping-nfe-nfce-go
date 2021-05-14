@@ -1,13 +1,11 @@
 import { format } from 'date-fns-tz'
-// import { tmpdir } from 'os'
 import path from 'path'
 
 import 'dotenv/config'
+import { scrapingNotes } from '../../queues/lib/ScrapingNotes'
 import { OrganizeCertificates } from '../../services/certificates/organize-certificates'
-import { prepareCertificateRegedit } from '../../services/certificates/windows/prepare-certificate-regedit'
-// import { DeleteFolder } from '../../services/delete-folders'
 import { listFiles } from '../../utils/get-list-files-of-folder'
-import { MainNFGoias } from './MainNFGoias'
+import { ISettingsNFeGoias } from './ISettingsNFeGoias'
 
 class Applicattion {
     private hourLog: string
@@ -25,24 +23,18 @@ class Applicattion {
         const listFilesCertificates = await listFiles(path.resolve(process.env.FOLDER_CERTIFICATE_COPY, 'ok'))
         for (const fileCertificate of listFilesCertificates) {
             try {
-                const certificate = await prepareCertificateRegedit(fileCertificate)
-
-                await MainNFGoias({
+                const settings: ISettingsNFeGoias = {
                     wayCertificate: fileCertificate,
                     hourLog: this.hourLog,
-                    dateHourProcessing: this.hourLogToCreateFolder,
-                    nameCompanie: certificate.nameCertificate
+                    dateHourProcessing: this.hourLogToCreateFolder
+                }
+                await scrapingNotes.add({
+                    settings
                 })
-
-                // it's necessary to close chromiumm withoud error
-                await new Promise((resolve) => setTimeout(() => resolve(''), 5000))
-
-                // console.log('*- Deletando pastas com o nome puppeteer_dev_chrome do %temp% do user')
-                // await DeleteFolder(tmpdir(), 'puppeteer_dev_chrome', true)
+                console.log(`*- Certificado ${fileCertificate} adicionado na fila`)
             } catch (error) {
-                console.log(`*- Erro ao processar certificado ${fileCertificate}. O erro é ${error}`)
+                console.log(`*- Erro ao adicionar na fila certificado ${fileCertificate}. O erro é ${error}`)
             }
-            console.log('------------------------------------------')
         }
     }
 }

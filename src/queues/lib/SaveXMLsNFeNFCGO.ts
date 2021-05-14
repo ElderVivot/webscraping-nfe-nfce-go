@@ -28,8 +28,7 @@ saveXMLsNFeNFCGO.on('failed', async (job, error) => {
         qtdTimesReprocessed: settings.qtdTimesReprocessed
     })
 
-    console.log('Job failed', job.data)
-    console.log(error)
+    console.log('Job failed', `ID ${settings.id} | ${settings.codeCompanie} - ${settings.nameCompanie} - ${settings.cgceCompanie} | ${settings.modelNF} | ${settings.dateStartDown} - ${settings.dateEndDown}`)
 })
 
 saveXMLsNFeNFCGO.on('completed', async (job) => {
