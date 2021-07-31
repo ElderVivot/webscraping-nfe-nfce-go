@@ -27,6 +27,8 @@ export class TreatsMessageLogNFeGoias {
         if (this.browser) await this.browser.close()
 
         if (saveInDB) {
+            if (this.settings.reprocessingFetchErrors) { this.settings.qtdTimesReprocessed += 1 }
+
             const saveLogNfeNfceGO = new SaveLogNfeNfceGO()
             await saveLogNfeNfceGO.saveLog({
                 id: this.settings.id,
@@ -43,7 +45,7 @@ export class TreatsMessageLogNFeGoias {
                 modelNF: this.settings.modelNF || '',
                 dateStartDown: this.settings.dateStartDown,
                 dateEndDown: this.settings.dateEndDown,
-                qtdNotesDown: this.settings.qtdTimesReprocessed,
+                qtdNotesDown: this.settings.qtdNotes,
                 qtdTimesReprocessed: this.settings.qtdTimesReprocessed
             })
         }

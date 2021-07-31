@@ -128,7 +128,7 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                                 settings.month = monthSring
                                 settings.entradasOrSaidas = 'Saidas'
 
-                                if (!settings.reprocessingFetchErrors) { await ChecksIfFetchInCompetence(page, settings) }
+                                await ChecksIfFetchInCompetence(page, settings)
 
                                 console.log('\t7- Checando se é uma empresa válida pra este período.')
                                 settings = await CheckIfCompanieIsValid(page, settings)
