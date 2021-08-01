@@ -20,6 +20,7 @@ const ScrapingNotes = {
             id: settings.id,
             cgceCompanie: settings.cgceCompanie,
             modelNF: settings.modelNF,
+            situacaoNF: settings.situacaoNF,
             qtdTimesReprocessed: settings.qtdTimesReprocessed,
             dateStartDown: settings.dateStartDown,
             dateEndDown: settings.dateEndDown

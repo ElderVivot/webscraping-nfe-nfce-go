@@ -19,7 +19,7 @@ import { ClickOkDownloadFinish } from './ClickOkDownloadFinish'
 // import { CloseOnePage } from './CloseOnePage'
 import { CreateFolderToSaveXmls } from './CreateFolderToSaveXmls'
 import { GetCnpjs } from './GetCnpjs'
-// import { GetQuantityNotes } from './GetQuantityNotes'
+import { GetQuantityNotes } from './GetQuantityNotes'
 import { GoesThroughCaptcha } from './GoesThroughCaptcha'
 import { InputModeloToDownload } from './InputModeloToDownload'
 import { InputPeriodToDownload } from './InputPeriodToDownload'
@@ -29,12 +29,19 @@ import { PeriodToDownNFeGoias } from './PeriodToDownNFeGoias'
 import { SendLastDownloadToQueue } from './SendLastDownloadToQueue'
 import { SetDateInicialAndFinalOfMonth } from './SetDateInicialAndFinalOfMonth'
 
-const modelosNFe = ['55', '65', '57']
+const modelosNFe = [/* '55', */'65'/*, '57' */]
+const situacaoNFs = ['2', '3']
 
 function typeNF (modelo: string): string {
     if (modelo === '55') return 'NF-e'
     else if (modelo === '57') return 'CT-e'
     else if (modelo === '65') return 'NFC-e'
+    else return 'DESCONHECIDO'
+}
+
+function getDescriptionSituacaoNF (situacao: string): string {
+    if (situacao === '2') return 'Autorizadas'
+    else if (situacao === '3') return 'Canceladas'
     else return 'DESCONHECIDO'
 }
 
@@ -58,7 +65,7 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
         // executablePath: path.join('C:', 'Program Files (x86)', 'Google', 'Chrome', 'Application', 'chrome.exe')
         })
 
-        const { dateStartDown, dateEndDown, modelNF, cgceCompanie } = settings
+        const { dateStartDown, dateEndDown, modelNF, situacaoNF, cgceCompanie } = settings
         settings.reprocessingFetchErrors = !!(dateStartDown && dateEndDown)
 
         console.log('1- Abrindo nova página')
@@ -86,103 +93,111 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
             for (const modelo of modelosNFe) {
             // Esta linha analisa se é o modelo de nota esperado, nos casos de reprocessamento pra correção de erros
                 if (modelNF && modelo !== modelNF) continue
-
                 settings.typeNF = typeNF(modelo)
                 settings.modelNF = modelo
 
                 console.log(`\t5- Buscando ${settings.typeNF}`)
 
-                try {
-                // Pega o período necessário pra processamento
-                    let periodToDown = null
-                    if (!settings.reprocessingFetchErrors) {
-                        periodToDown = await PeriodToDownNFeGoias(page, settings)
-                    } else {
-                        periodToDown = {
-                            dateStart: new Date(zonedTimeToUtc(dateStartDown, 'America/Sao_Paulo')),
-                            dateEnd: new Date(zonedTimeToUtc(dateEndDown, 'America/Sao_Paulo'))
+                for (const situacao of situacaoNFs) {
+                    if (situacaoNF && situacao !== situacaoNF) continue
+                    settings.situacaoNF = situacao
+                    settings.situacaoNFDescription = getDescriptionSituacaoNF(situacao)
+
+                    console.log(`\t6- Buscando notas ${settings.situacaoNFDescription}`)
+
+                    try {
+                        // Pega o período necessário pra processamento
+                        let periodToDown = null
+                        if (!settings.reprocessingFetchErrors) {
+                            periodToDown = await PeriodToDownNFeGoias(page, settings)
+                        } else {
+                            periodToDown = {
+                                dateStart: new Date(zonedTimeToUtc(dateStartDown, 'America/Sao_Paulo')),
+                                dateEnd: new Date(zonedTimeToUtc(dateEndDown, 'America/Sao_Paulo'))
+                            }
                         }
-                    }
-                    let year = periodToDown.dateStart.getFullYear()
-                    const yearInicial = year
-                    const yearFinal = periodToDown.dateEnd.getFullYear()
-                    const monthInicial = periodToDown.dateStart.getMonth() + 1
-                    const monthFinal = periodToDown.dateEnd.getMonth() + 1
+                        let year = periodToDown.dateStart.getFullYear()
+                        const yearInicial = year
+                        const yearFinal = periodToDown.dateEnd.getFullYear()
+                        const monthInicial = periodToDown.dateStart.getMonth() + 1
+                        const monthFinal = periodToDown.dateEnd.getMonth() + 1
 
-                    while (year <= yearFinal) {
-                        const months = functions.returnMonthsOfYear(year, monthInicial, yearInicial, monthFinal, yearFinal)
+                        while (year <= yearFinal) {
+                            const months = functions.returnMonthsOfYear(year, monthInicial, yearInicial, monthFinal, yearFinal)
 
-                        for (const month of months) {
-                        // if (month === 12) continue // por enquanto ignora mes 12
-                        //  clean settings to old don't affect new process
-                            const monthSring = functions.zeroLeft(month.toString(), 2)
-                            console.log(`\t6- Iniciando processamento do mês ${monthSring}/${year}`)
-                            settings = cleanDataObject(settings, [], ['id', 'wayCertificate', 'hourLog', 'dateHourProcessing', 'nameCompanie', 'cgceCompanie', 'modelNF', 'typeNF', 'qtdTimesReprocessed', 'reprocessingFetchErrors'])
+                            for (const month of months) {
+                                // if (month === 12) continue // por enquanto ignora mes 12
+                                //  clean settings to old don't affect new process
+                                const monthSring = functions.zeroLeft(month.toString(), 2)
+                                console.log(`\t7- Iniciando processamento do mês ${monthSring}/${year}`)
+                                settings = cleanDataObject(settings, [], ['id', 'wayCertificate', 'hourLog', 'dateHourProcessing', 'nameCompanie', 'cgceCompanie', 'modelNF', 'situacaoNF', 'situacaoNFDescription', 'typeNF', 'qtdTimesReprocessed', 'reprocessingFetchErrors'])
 
-                            try {
-                                const dateInicialAndFinalOfMonth = await SetDateInicialAndFinalOfMonth(page, settings, periodToDown, month, year)
+                                try {
+                                    const dateInicialAndFinalOfMonth = await SetDateInicialAndFinalOfMonth(page, settings, periodToDown, month, year)
 
-                                settings.dateStartDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.inicialDate, 'America/Sao_Paulo')))} 03:00:00 AM`
-                                settings.dateEndDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.finalDate, 'America/Sao_Paulo')))} 03:00:00 AM`
-                                settings.year = year
-                                settings.month = monthSring
-                                settings.entradasOrSaidas = 'Saidas'
+                                    settings.dateStartDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.inicialDate, 'America/Sao_Paulo')))} 03:00:00 AM`
+                                    settings.dateEndDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateInicialAndFinalOfMonth.finalDate, 'America/Sao_Paulo')))} 03:00:00 AM`
+                                    settings.year = year
+                                    settings.month = monthSring
+                                    settings.entradasOrSaidas = 'Saidas'
 
-                                await ChecksIfFetchInCompetence(page, settings)
+                                    await ChecksIfFetchInCompetence(page, settings)
 
-                                console.log('\t7- Checando se é uma empresa válida pra este período.')
-                                settings = await CheckIfCompanieIsValid(page, settings)
-                                // const pageMonth = await browser.newPage()
-                                // await pageMonth.setViewport({ width: 0, height: 0 })
-                                await page.goto(urlActual)
+                                    console.log('\t8- Checando se é uma empresa válida pra este período.')
+                                    settings = await CheckIfCompanieIsValid(page, settings)
+                                    // const pageMonth = await browser.newPage()
+                                    // await pageMonth.setViewport({ width: 0, height: 0 })
+                                    await page.goto(urlActual)
 
-                                console.log('\t8- Informando o CNPJ e período pra download.')
-                                await InputPeriodToDownload(page, settings)
-                                await ChangeCnpj(page, settings)
+                                    console.log('\t9- Informando o CNPJ e período pra download.')
+                                    await InputPeriodToDownload(page, settings)
+                                    await ChangeCnpj(page, settings)
 
-                                console.log('\t9- Informando o modelo')
-                                await InputModeloToDownload(page, settings)
+                                    console.log('\t10- Informando o modelo')
+                                    await InputModeloToDownload(page, settings)
 
-                                console.log('\t10- Passando pelo Captcha')
-                                await GoesThroughCaptcha(page, settings)
+                                    console.log('\t11- Passando pelo Captcha')
+                                    await GoesThroughCaptcha(page, settings)
 
-                                console.log('\t11- Verificando se há notas no filtro passado')
-                                await CheckIfSemResultados(page, settings)
+                                    console.log('\t12- Verificando se há notas no filtro passado')
+                                    await CheckIfSemResultados(page, settings)
 
-                                // const qtdNotesGlobal = await GetQuantityNotes(page, settings)
+                                    const qtdNotesGlobal = await GetQuantityNotes(page, settings)
+                                    console.log(qtdNotesGlobal)
 
-                                console.log('\t12- Clicando pra baixar todos os arquivos')
-                                await ClickDownloadAll(page, settings)
+                                    console.log('\t13- Clicando pra baixar todos os arquivos')
+                                    await ClickDownloadAll(page, settings)
 
-                                console.log('\t13- Clicando pra baixar dentro do modal')
-                                const qtdNotes = await ClickDownloadModal(page, settings)
-                                settings.qtdNotes = qtdNotes
+                                    console.log('\t14- Clicando pra baixar dentro do modal')
+                                    const qtdNotes = await ClickDownloadModal(page, settings)
+                                    settings.qtdNotes = qtdNotes
 
-                                console.log(`\t14- Criando pasta pra salvar ${settings.qtdNotes} notas`)
-                                settings.typeLog = 'success' // update to sucess to create folder
-                                await CreateFolderToSaveXmls(page, settings)
+                                    console.log(`\t15- Criando pasta pra salvar ${settings.qtdNotes} notas`)
+                                    settings.typeLog = 'success' // update to sucess to create folder
+                                    await CreateFolderToSaveXmls(page, settings)
 
-                                console.log('\t15- Checando se o download ainda está em progresso')
-                                await CheckIfDownloadInProgress(page, settings)
+                                    console.log('\t16- Checando se o download ainda está em progresso')
+                                    await CheckIfDownloadInProgress(page, settings)
 
-                                console.log('\t16- Após processamento concluído, clicando em OK pra finalizar')
-                                await ClickOkDownloadFinish(page, settings)
+                                    console.log('\t17- Após processamento concluído, clicando em OK pra finalizar')
+                                    await ClickOkDownloadFinish(page, settings)
 
-                                console.log('\t17- Enviando informação que o arquivo foi baixado pra fila de salvar o processamento.')
-                                await SendLastDownloadToQueue(page, settings)
+                                    console.log('\t18 Enviando informação que o arquivo foi baixado pra fila de salvar o processamento.')
+                                    await SendLastDownloadToQueue(page, settings)
 
-                                console.log('\t[Final-Empresa-Mes]')
-                                console.log('\t-------------------------------------------------')
-                            // await CloseOnePage(page, 'Empresa')
-                            } catch (error) { console.log(error) }
+                                    console.log('\t[Final-Empresa-Mes]')
+                                    console.log('\t-------------------------------------------------')
+                                    // await CloseOnePage(page, 'Empresa')
+                                } catch (error) { console.log(error) }
+                            }
+                            year++
                         }
-                        year++
-                    }
-                // qtdEmpresas++
-                // if (qtdEmpresas === optionsCnpjs.length) {
-                //     if (browser.isConnected()) await browser.close()
-                // }
-                } catch (error) { console.log(error) }
+                        // qtdEmpresas++
+                        // if (qtdEmpresas === optionsCnpjs.length) {
+                        //     if (browser.isConnected()) await browser.close()
+                        // }
+                    } catch (error) { console.log(error) }
+                }
             }
         }
         console.log('[Final] - Todos os dados deste navegador foram processados, fechando navegador.')

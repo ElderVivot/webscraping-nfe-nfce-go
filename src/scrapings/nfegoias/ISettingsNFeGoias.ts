@@ -11,6 +11,8 @@ export interface ISettingsNFeGoias {
     nameCompanie?: string,
     cgceCompanie?: string,
     modelNF?: string,
+    situacaoNF?: string,
+    situacaoNFDescription?: string,
     entradasOrSaidas?: string,
     typeNF?: string,
     messageError?: string,

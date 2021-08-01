@@ -7,6 +7,7 @@ export default interface ILogNfeNfceGO {
     codeCompanie?: string
     nameCompanie?: string
     modelNF?: string
+    situacaoNF?: string,
     hourLog?: string
     dateStartDown?: string
     dateEndDown?: string

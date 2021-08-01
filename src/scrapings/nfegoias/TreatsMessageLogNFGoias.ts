@@ -43,6 +43,7 @@ export class TreatsMessageLogNFeGoias {
                 nameCompanie: this.settings.nameCompanie,
                 cgceCompanie: this.settings.cgceCompanie,
                 modelNF: this.settings.modelNF || '',
+                situacaoNF: this.settings.situacaoNF,
                 dateStartDown: this.settings.dateStartDown,
                 dateEndDown: this.settings.dateEndDown,
                 qtdNotesDown: this.settings.qtdNotes,

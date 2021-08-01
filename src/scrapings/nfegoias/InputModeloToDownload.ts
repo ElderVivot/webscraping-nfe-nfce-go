@@ -7,6 +7,9 @@ export async function InputModeloToDownload (page: Page, settings: ISettingsNFeG
     try {
         await page.waitForSelector('#cmpModelo')
         await page.select('#cmpModelo', settings.modelNF)
+
+        await page.waitForSelector('#cmpSituacao')
+        await page.select('#cmpSituacao', settings.situacaoNF)
     } catch (error) {
         settings.typeLog = 'error'
         settings.messageLog = 'InputModeloToDownload'

@@ -26,7 +26,7 @@ export async function SetDateInicialAndFinalOfMonth (page: Page, settings: ISett
             const daysInitialAndFinalOfMonth = functions.daysInitialAndEndOfMonth(month, year)
 
             const getMaxDateDownNfeNfcePerMonth = new GetMaxDateDownNfeNfcePerMonth()
-            const dataLog = await getMaxDateDownNfeNfcePerMonth.show(`?cgceCompanie=${settings.cgceCompanie}&modelNF=${settings.modelNF}&month=${month}&year=${year}`)
+            const dataLog = await getMaxDateDownNfeNfcePerMonth.show(`?cgceCompanie=${settings.cgceCompanie}&modelNF=${settings.modelNF}&situacaoNF=${settings.situacaoNF}&month=${month}&year=${year}`)
             const { datedownmax } = dataLog
             if (datedownmax) {
                 const dateDownMax = new Date(datedownmax)

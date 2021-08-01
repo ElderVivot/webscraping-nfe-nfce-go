@@ -22,13 +22,14 @@ saveXMLsNFeNFCGO.on('failed', async (job, error) => {
         nameCompanie: settings.nameCompanie,
         cgceCompanie: settings.cgceCompanie,
         modelNF: settings.modelNF,
+        situacaoNF: settings.situacaoNF,
         dateStartDown: settings.dateStartDown,
         dateEndDown: settings.dateEndDown,
         qtdNotesDown: settings.qtdNotes,
         qtdTimesReprocessed: settings.qtdTimesReprocessed
     })
 
-    console.log('Job failed', `ID ${settings.id} | ${settings.codeCompanie} - ${settings.nameCompanie} - ${settings.cgceCompanie} | ${settings.modelNF} | ${settings.dateStartDown} - ${settings.dateEndDown}`)
+    console.log('Job failed', `ID ${settings.id} | ${settings.codeCompanie} - ${settings.nameCompanie} - ${settings.cgceCompanie} | ${settings.modelNF} | ${settings.situacaoNFDescription} | ${settings.dateStartDown} - ${settings.dateEndDown}`)
 })
 
 saveXMLsNFeNFCGO.on('completed', async (job) => {
@@ -47,6 +48,7 @@ saveXMLsNFeNFCGO.on('completed', async (job) => {
         nameCompanie: settings.nameCompanie,
         cgceCompanie: settings.cgceCompanie,
         modelNF: settings.modelNF,
+        situacaoNF: settings.situacaoNF,
         dateStartDown: settings.dateStartDown,
         dateEndDown: settings.dateEndDown,
         qtdNotesDown: settings.qtdNotes,

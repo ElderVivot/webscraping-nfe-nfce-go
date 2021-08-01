@@ -41,6 +41,8 @@ const mountFolder = (settings: ISettingsNFeGoias, folder: string) => {
             folderComplete += settings.entradasOrSaidas ? `${settings.entradasOrSaidas}/` : ''
         } else if (field === 'typeNF') {
             folderComplete += settings.typeNF ? `${settings.typeNF}/` : ''
+        } else if (field === 'situacaoNF') {
+            folderComplete += settings.situacaoNFDescription ? `${settings.situacaoNFDescription}/` : ''
         } else if (field === 'codeCompanieWithNameCompanie') {
             folderComplete += settings.nameCompanie && settings.codeCompanie ? `${settings.codeCompanie}-${nameCompanie}/` : `${nameCompanie} - ${settings.cgceCompanie}/`
         } else if (field === 'codeCompanieRotinaAutomatica') {

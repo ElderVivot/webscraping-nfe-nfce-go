@@ -8,15 +8,24 @@ import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
 
 export async function ChecksIfFetchInCompetence (page: Page, settings: ISettingsNFeGoias): Promise<void> {
     try {
-        const filter = `?cgceCompanie=${settings.cgceCompanie}&modelNF=${settings.modelNF}&month=${settings.month}&year=${settings.year}`
+        const dayStart = new Date(settings.dateStartDown).getDate()
+        const dayEnd = new Date(settings.dateEndDown).getDate()
+        const month = Number(settings.month)
+        const year = Number(settings.year)
+        const lastDayOfMonth = new Date(year, month, 0).getDate()
+
+        const filter = `?cgceCompanie=${settings.cgceCompanie}&modelNF=${settings.modelNF}&situacaoNF=${settings.situacaoNF}&month=${settings.month}&year=${settings.year}`
 
         // when dont reprocessing error
         const getLogFetchCompetence = new GetLogFetchCompetence()
         const dataLog = await getLogFetchCompetence.show(filter)
         const { daymaxdown } = dataLog
 
-        const dayEnd = new Date(settings.dateEndDown).getDate()
-        if (daymaxdown && daymaxdown >= dayEnd) {
+        if (settings.situacaoNF === '3' && (dayStart !== 1 || dayEnd !== lastDayOfMonth)) {
+            throw 'NOTE_CANCELED_DOWNLOAD_ONLY_FULL_MONTH'
+        }
+
+        if (!settings.reprocessingFetchErrors && daymaxdown && daymaxdown >= dayEnd) {
             throw 'PERIOD_ALREADY_PROCESSED'
         }
 
@@ -35,6 +44,11 @@ export async function ChecksIfFetchInCompetence (page: Page, settings: ISettings
         settings.messageLog = 'ChecksIfFetchInCompetence'
         settings.messageError = error
         settings.messageLogToShowUser = 'Erro ao verificar se o período já foi procesado antes.'
+        if (error === 'NOTE_CANCELED_DOWNLOAD_ONLY_FULL_MONTH') {
+            settings.typeLog = 'warning'
+            settings.messageLogToShowUser = 'Nota cancelada faz o download apenas do mês completo'
+            saveInDB = false
+        }
         if (error === 'PERIOD_ALREADY_PROCESSED') {
             settings.typeLog = 'warning'
             settings.messageLogToShowUser = 'Período já processado anteriormente.'

@@ -23,7 +23,8 @@ const getDateEnd = (): Date => {
     let dateEnd: Date
     const dayToday = today.getDate()
     if (dayToday === 1) {
-        dateEnd = new Date(today.getFullYear(), today.getMonth() - 1, 15)
+        dateEnd = new Date(today.getFullYear(), today.getMonth(), 0)
+        // dateEnd = new Date(today.getFullYear(), today.getMonth() - 1, 15)
     } else if (dayToday >= 2 && dayToday <= 16) {
         dateEnd = new Date(today.getFullYear(), today.getMonth(), 0)
     } else { // dayToday >= 17 && dayToday <= last day of month

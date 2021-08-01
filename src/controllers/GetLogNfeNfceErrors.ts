@@ -5,6 +5,7 @@ interface ILogNfeNfceErrors {
     wayCertificate: string,
     cgceCompanie: string,
     modelNF: string,
+    situacaoNF: string,
     dateStartDown: string,
     dateEndDown: string,
     qtdTimesReprocessed: number
