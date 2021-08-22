@@ -21,9 +21,12 @@ const ScrapingNotes = {
             cgceCompanie: settings.cgceCompanie,
             modelNF: settings.modelNF,
             situacaoNF: settings.situacaoNF,
+            typeLog: settings.typeLog,
             qtdTimesReprocessed: settings.qtdTimesReprocessed,
             dateStartDown: settings.dateStartDown,
-            dateEndDown: settings.dateEndDown
+            dateEndDown: settings.dateEndDown,
+            pageInicial: settings.pageInicial,
+            pageFinal: settings.pageFinal
         })
 
         // it's necessary to close chromiumm withoud error

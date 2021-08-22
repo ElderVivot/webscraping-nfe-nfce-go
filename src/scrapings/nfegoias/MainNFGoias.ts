@@ -29,7 +29,7 @@ import { PeriodToDownNFeGoias } from './PeriodToDownNFeGoias'
 import { SendLastDownloadToQueue } from './SendLastDownloadToQueue'
 import { SetDateInicialAndFinalOfMonth } from './SetDateInicialAndFinalOfMonth'
 
-const modelosNFe = [/* '55', */'65'/*, '57' */]
+const modelosNFe = process.env.MODELOS_NFs.split(',') || ['55', '65', '57']
 const situacaoNFs = ['2', '3']
 
 function typeNF (modelo: string): string {
@@ -65,8 +65,8 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
         // executablePath: path.join('C:', 'Program Files (x86)', 'Google', 'Chrome', 'Application', 'chrome.exe')
         })
 
-        const { dateStartDown, dateEndDown, modelNF, situacaoNF, cgceCompanie } = settings
-        settings.reprocessingFetchErrors = !!(dateStartDown && dateEndDown)
+        const { dateStartDown, dateEndDown, modelNF, situacaoNF, cgceCompanie, pageInicial, pageFinal } = settings
+        settings.reprocessingFetchErrorsOrProcessing = !!(dateStartDown && dateEndDown)
 
         console.log('1- Abrindo nova página')
         const page = await browser.newPage()
@@ -108,7 +108,7 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                     try {
                         // Pega o período necessário pra processamento
                         let periodToDown = null
-                        if (!settings.reprocessingFetchErrors) {
+                        if (!settings.reprocessingFetchErrorsOrProcessing) {
                             periodToDown = await PeriodToDownNFeGoias(page, settings)
                         } else {
                             periodToDown = {
@@ -126,11 +126,10 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                             const months = functions.returnMonthsOfYear(year, monthInicial, yearInicial, monthFinal, yearFinal)
 
                             for (const month of months) {
-                                // if (month === 12) continue // por enquanto ignora mes 12
-                                //  clean settings to old don't affect new process
                                 const monthSring = functions.zeroLeft(month.toString(), 2)
                                 console.log(`\t7- Iniciando processamento do mês ${monthSring}/${year}`)
-                                settings = cleanDataObject(settings, [], ['id', 'wayCertificate', 'hourLog', 'dateHourProcessing', 'nameCompanie', 'cgceCompanie', 'modelNF', 'situacaoNF', 'situacaoNFDescription', 'typeNF', 'qtdTimesReprocessed', 'reprocessingFetchErrors'])
+                                //  clean settings to old don't affect new process
+                                settings = cleanDataObject(settings, [], ['id', 'wayCertificate', 'hourLog', 'dateHourProcessing', 'nameCompanie', 'cgceCompanie', 'modelNF', 'situacaoNF', 'situacaoNFDescription', 'typeNF', 'typeLog', 'qtdTimesReprocessed', 'reprocessingFetchErrorsOrProcessing', 'pageInicial', 'pageFinal'])
 
                                 try {
                                     const dateInicialAndFinalOfMonth = await SetDateInicialAndFinalOfMonth(page, settings, periodToDown, month, year)
@@ -145,8 +144,6 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
 
                                     console.log('\t8- Checando se é uma empresa válida pra este período.')
                                     settings = await CheckIfCompanieIsValid(page, settings)
-                                    // const pageMonth = await browser.newPage()
-                                    // await pageMonth.setViewport({ width: 0, height: 0 })
                                     await page.goto(urlActual)
 
                                     console.log('\t9- Informando o CNPJ e período pra download.')
@@ -163,27 +160,53 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                                     await CheckIfSemResultados(page, settings)
 
                                     const qtdNotesGlobal = await GetQuantityNotes(page, settings)
-                                    console.log(qtdNotesGlobal)
+                                    settings.qtdNotes = qtdNotesGlobal
+                                    const qtdPagesDivPer100 = Math.trunc(qtdNotesGlobal / 100)
+                                    const qtdPagesModPer100 = qtdNotesGlobal % 100
+                                    settings.qtdPagesTotal = (qtdPagesDivPer100 >= 1 ? qtdPagesDivPer100 : 0) + (qtdPagesModPer100 >= 1 ? 1 : 0)
+                                    settings.pageInicial = 1
+                                    settings.pageFinal = settings.qtdPagesTotal <= 20 ? settings.qtdPagesTotal : 20
+                                    let countWhilePages = 0
 
-                                    console.log('\t13- Clicando pra baixar todos os arquivos')
-                                    await ClickDownloadAll(page, settings)
+                                    while (true) {
+                                        // console.log(settings)
+                                        if (countWhilePages === 0 && pageInicial && pageFinal) {
+                                            settings.pageInicial = pageInicial || settings.pageInicial
+                                            settings.pageFinal = pageFinal || settings.pageFinal
+                                        }
 
-                                    console.log('\t14- Clicando pra baixar dentro do modal')
-                                    const qtdNotes = await ClickDownloadModal(page, settings)
-                                    settings.qtdNotes = qtdNotes
+                                        console.log(`\t13- Clicando pra baixar arquivos - pag ${settings.pageInicial} a ${settings.pageFinal} de um total de ${settings.qtdPagesTotal}`)
+                                        await ClickDownloadAll(page, settings)
 
-                                    console.log(`\t15- Criando pasta pra salvar ${settings.qtdNotes} notas`)
-                                    settings.typeLog = 'success' // update to sucess to create folder
-                                    await CreateFolderToSaveXmls(page, settings)
+                                        console.log('\t14- Clicando pra baixar dentro do modal')
+                                        await ClickDownloadModal(page, settings)
 
-                                    console.log('\t16- Checando se o download ainda está em progresso')
-                                    await CheckIfDownloadInProgress(page, settings)
+                                        console.log(`\t15- Criando pasta pra salvar ${settings.qtdNotes} notas`)
+                                        settings.typeLog = 'success' // update to sucess to create folder
+                                        await CreateFolderToSaveXmls(page, settings)
 
-                                    console.log('\t17- Após processamento concluído, clicando em OK pra finalizar')
+                                        console.log('\t16- Checando se o download ainda está em progresso')
+                                        await CheckIfDownloadInProgress(page, settings)
+
+                                        console.log('\t17- Enviando informação que o arquivo foi baixado pra fila de salvar o processamento.')
+                                        const pageDownload = await browser.newPage()
+                                        await pageDownload.setViewport({ width: 0, height: 0 })
+                                        await SendLastDownloadToQueue(pageDownload, settings)
+                                        if (pageDownload) { await pageDownload.close() }
+
+                                        settings.pageFinal = settings.pageFinal + 20
+                                        settings.pageFinal = settings.pageFinal > settings.qtdPagesTotal ? settings.qtdPagesTotal : settings.pageFinal
+                                        const varAuxiliar = settings.pageFinal - settings.pageInicial - 20
+                                        settings.pageInicial = settings.pageFinal - varAuxiliar
+                                        if (settings.pageInicial > settings.pageFinal) break // if pageInicial is > than pageFinal its because finish processing
+                                        settings.typeLog = 'processing'
+
+                                        countWhilePages += 1
+                                    }
+                                    console.log('\t18- Após processamento concluído, clicando em OK pra finalizar')
                                     await ClickOkDownloadFinish(page, settings)
-
-                                    console.log('\t18 Enviando informação que o arquivo foi baixado pra fila de salvar o processamento.')
-                                    await SendLastDownloadToQueue(page, settings)
+                                    settings.pageInicial = 0
+                                    settings.pageFinal = 0
 
                                     console.log('\t[Final-Empresa-Mes]')
                                     console.log('\t-------------------------------------------------')

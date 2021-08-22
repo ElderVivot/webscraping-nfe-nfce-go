@@ -1,45 +1,37 @@
 import 'dotenv/config'
-import { subMonths/*, addDays */ } from 'date-fns'
+import { subMonths } from 'date-fns'
 import { Page } from 'puppeteer'
 
-// import GetMaxDateDownNfeNfce from '../../controllers/GetMaxDateDownNfeNfce'
 import IPeriodToDownNotes from '../../models/IPeriodToDownNotes'
 import { ISettingsNFeGoias } from './ISettingsNFeGoias'
 import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
 
 const getDateStart = (/* datedownmax: any */): Date => {
-    // let dateStart: Date
-    // if (!datedownmax) {
     const dateStart = subMonths(new Date(), Number(process.env.RETROACTIVE_MONTHS_TO_DOWNLOAD) || 0)
     dateStart.setDate(1)
-    // } else {
-    //     dateStart = addDays(new Date(datedownmax), 1)
-    // }
     return dateStart
 }
 
 const getDateEnd = (): Date => {
+    const dayFirstSearch = Number(process.env.DAY_FIRST_SEARCH) || 15
+    console.log(dayFirstSearch)
     const today = new Date()
     let dateEnd: Date
     const dayToday = today.getDate()
     if (dayToday === 1) {
-        dateEnd = new Date(today.getFullYear(), today.getMonth() - 1, 15)
-    } else if (dayToday >= 2 && dayToday <= 16) {
+        dateEnd = new Date(today.getFullYear(), today.getMonth() - 1, dayFirstSearch)
+    } else if (dayToday >= 2 && dayToday <= dayFirstSearch + 1) {
         dateEnd = new Date(today.getFullYear(), today.getMonth(), 0)
-    } else { // dayToday >= 17 && dayToday <= last day of month
+    } else { // dayToday >= dayFirstSearch+2 && dayToday <= last day of month
         dateEnd = today
-        dateEnd.setDate(15)
+        dateEnd.setDate(dayFirstSearch)
     }
     return dateEnd
 }
 
 export async function PeriodToDownNFeGoias (page: Page, settings: ISettingsNFeGoias): Promise<IPeriodToDownNotes> {
     try {
-        // const getMaxDateDownNfeNfce = new GetMaxDateDownNfeNfce()
-        // const dataLog = await getMaxDateDownNfeNfce.getMaxDateDown(`?cgceCompanie=${settings.cgceCompanie}&modelNF=${settings.modelNF}`)
-        // const datedownmax = null // dataLog
-
-        const dateStart = getDateStart(/* datedownmax */)
+        const dateStart = getDateStart()
         const dateEnd = getDateEnd()
 
         if (dateStart >= dateEnd) {
@@ -65,13 +57,3 @@ export async function PeriodToDownNFeGoias (page: Page, settings: ISettingsNFeGo
         await treatsMessageLog.saveLog()
     }
 }
-
-// const periodToDownNotesGoiania = new PeriodToDownNotesGoiania({
-//     dateHourProcessing: '',
-//     hourLog: '',
-//     idUser: 0,
-//     loguin: '',
-//     password: '',
-//     inscricaoMunicipal: '4273222'
-// })
-// periodToDownNotesGoiania.process().then(result => console.log(result))

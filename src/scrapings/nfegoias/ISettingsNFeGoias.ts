@@ -25,6 +25,9 @@ export interface ISettingsNFeGoias {
     year?: number,
     month?: string,
     qtdNotes?: number,
+    pageInicial?: number,
+    pageFinal?: number,
+    qtdPagesTotal?: number,
     qtdTimesReprocessed?: number,
-    reprocessingFetchErrors?: boolean
+    reprocessingFetchErrorsOrProcessing?: boolean
 }

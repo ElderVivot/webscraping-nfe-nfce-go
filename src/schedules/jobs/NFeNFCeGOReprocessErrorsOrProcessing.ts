@@ -1,13 +1,14 @@
 import { CronJob } from 'cron'
 import { format } from 'date-fns-tz'
 
-import GetLogNfeNfceErrors from '../../controllers/GetLogNfeNfceErrors'
+import GetLogNfeNfceErrorsOrProcessing from '../../controllers/GetLogNfeNfceErrorsOrProcessing'
+import TTypeLog from '../../models/TTypeLog'
 import { scrapingNotes } from '../../queues/lib/ScrapingNotes'
 import { ISettingsNFeGoias } from '../../scrapings/nfegoias/ISettingsNFeGoias'
 
-async function processNotes () {
-    const getLogNfeNfceErrors = new GetLogNfeNfceErrors()
-    const logNfeNfceErrors = await getLogNfeNfceErrors.get()
+async function processNotes (typeLog: TTypeLog) {
+    const getLogNfeNfceErrorsOrProcessing = new GetLogNfeNfceErrorsOrProcessing()
+    const logNfeNfceErrors = await getLogNfeNfceErrorsOrProcessing.get(`?typeLog=${typeLog}`)
     if (logNfeNfceErrors) {
         for (const log of logNfeNfceErrors) {
             const hourLogToCreateFolder = format(new Date(), 'yyyy-MM-dd_hh-mm-ss_a', { timeZone: 'America/Sao_Paulo' })
@@ -22,9 +23,12 @@ async function processNotes () {
                     cgceCompanie: log.cgceCompanie,
                     modelNF: log.modelNF,
                     situacaoNF: log.situacaoNF,
+                    typeLog,
                     qtdTimesReprocessed: log.qtdTimesReprocessed,
                     dateStartDown: log.dateStartDown,
-                    dateEndDown: log.dateEndDown
+                    dateEndDown: log.dateEndDown,
+                    pageInicial: log.pageInicial,
+                    pageFinal: log.pageFinal
                 }
                 await scrapingNotes.add({
                     settings
@@ -38,59 +42,30 @@ async function processNotes () {
     }
 }
 
-const job1 = new CronJob(
+export const jobError = new CronJob(
     '30 * * * *',
     async function () {
         try {
-            await processNotes()
+            await processNotes('error')
         } catch (error) {
-            console.log(`- Erro ao reprocessar erros: ${error}`)
+            console.log(`- Erro ao reprocessar errors: ${error}`)
         }
     },
     null,
     true
 )
 
-// const job2 = new CronJob(
-//     '0 10 * * *',
-//     async function () {
-//         try {
-//             await processNotes()
-//         } catch (error) {
-//             console.log(`- Erro ao reprocessar erros: ${error}`)
-//         }
-//     },
-//     null,
-//     true
-// )
+export const jobProcessing = new CronJob(
+    '45 * * * *',
+    async function () {
+        try {
+            await processNotes('processing')
+        } catch (error) {
+            console.log(`- Erro ao reprocessar processing: ${error}`)
+        }
+    },
+    null,
+    true
+)
 
-// const job3 = new CronJob(
-//     '0 14 * * *',
-//     async function () {
-//         try {
-//             await processNotes()
-//         } catch (error) {
-//             console.log(`- Erro ao reprocessar erros: ${error}`)
-//         }
-//     },
-//     null,
-//     true
-// )
-
-// const job4 = new CronJob(
-//     '0 18 * * *',
-//     async function () {
-//         try {
-//             await processNotes()
-//         } catch (error) {
-//             console.log(`- Erro ao reprocessar erros: ${error}`)
-//         }
-//     },
-//     null,
-//     true
-// )
-
-// export { job1, job2, job3, job4 }
-export { job1 }
-
-// processNotes().then(_ => console.log(_))
+// processNotes('error').then(_ => console.log(_))

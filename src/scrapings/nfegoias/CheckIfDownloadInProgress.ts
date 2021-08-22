@@ -48,6 +48,8 @@ export async function CheckIfDownloadInProgress (page: Page, settings: ISettings
             throw 'MODEL_WITH_BUTTON_DOWN_IS_NOT_OPEN'
         }
     } catch (error) {
+        // when already processing before then dont save in database again because duplicate registry of scraping, only save is reprocessing
+        const saveInDB = settings.typeLog !== 'processing' || !!settings.id
         settings.typeLog = 'error'
         settings.messageLog = 'CheckIfDownloadInProgress'
         settings.messageError = error
@@ -62,6 +64,6 @@ export async function CheckIfDownloadInProgress (page: Page, settings: ISettings
         console.log('\t-------------------------------------------------')
 
         const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
-        await treatsMessageLog.saveLog()
+        await treatsMessageLog.saveLog(saveInDB)
     }
 }

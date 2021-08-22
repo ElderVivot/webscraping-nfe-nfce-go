@@ -10,6 +10,8 @@ export async function ClickDownloadAll (page: Page, settings: ISettingsNFeGoias)
         await page.waitForSelector('.btn-download-all')
         await page.click('.btn-download-all')
     } catch (error) {
+        // when already processing before then dont save in database again because duplicate registry of scraping, only save is reprocessing
+        const saveInDB = settings.typeLog !== 'processing' || !!settings.id
         settings.typeLog = 'error'
         settings.messageLog = 'ClickDownloadAll'
         settings.messageError = error
@@ -18,6 +20,6 @@ export async function ClickDownloadAll (page: Page, settings: ISettingsNFeGoias)
         console.log('\t-------------------------------------------------')
 
         const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
-        await treatsMessageLog.saveLog()
+        await treatsMessageLog.saveLog(saveInDB)
     }
 }

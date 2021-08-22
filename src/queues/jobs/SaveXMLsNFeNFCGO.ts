@@ -13,7 +13,6 @@ const SaveXMLsNFeNFCGO = {
         if (settings.situacaoNF === '3') {
             nameFile = nameFile.replace('.zip', '') + '_canc.zip'
         }
-        console.log(nameFile)
 
         console.log('---------------------------------------------------')
         console.log(`- [SaveXMLsInFolder] - Salvando xmls na pasta ${settings.codeCompanie || settings.cgceCompanie} - ${settings.nameCompanie} periodo ${settings.dateStartDown} a ${settings.dateEndDown} modelo ${settings.typeNF} e situacao ${settings.situacaoNFDescription}`)

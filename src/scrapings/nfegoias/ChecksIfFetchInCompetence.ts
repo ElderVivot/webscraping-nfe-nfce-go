@@ -14,7 +14,7 @@ export async function ChecksIfFetchInCompetence (page: Page, settings: ISettings
         const year = Number(settings.year)
         const lastDayOfMonth = new Date(year, month, 0).getDate()
 
-        const filter = `?cgceCompanie=${settings.cgceCompanie}&modelNF=${settings.modelNF}&situacaoNF=${settings.situacaoNF}&month=${settings.month}&year=${settings.year}`
+        let filter = `?cgceCompanie=${settings.cgceCompanie}&modelNF=${settings.modelNF}&situacaoNF=${settings.situacaoNF}&month=${settings.month}&year=${settings.year}`
 
         // when dont reprocessing error
         const getLogFetchCompetence = new GetLogFetchCompetence()
@@ -25,12 +25,14 @@ export async function ChecksIfFetchInCompetence (page: Page, settings: ISettings
             throw 'NOTE_CANCELED_DOWNLOAD_ONLY_FULL_MONTH'
         }
 
-        if (!settings.reprocessingFetchErrors && daymaxdown && daymaxdown >= dayEnd) {
+        if (!settings.reprocessingFetchErrorsOrProcessing && daymaxdown && daymaxdown >= dayEnd) {
             throw 'PERIOD_ALREADY_PROCESSED'
         }
 
         // when reprocessing error
-        if (settings.reprocessingFetchErrors) {
+        if (settings.reprocessingFetchErrorsOrProcessing) {
+            const typeLogFilter = settings.typeLog === 'processing' ? 'error' : 'processing'
+            filter = `${filter}&typeLog=${typeLogFilter}`
             const getLogFetchCompetenceWarnSuccess = new GetLogFetchCompetenceWarnSuccess()
             const dataLogWarnSuccess = await getLogFetchCompetenceWarnSuccess.show(filter)
             const daymaxdownWarnSucess = dataLogWarnSuccess.daymaxdown

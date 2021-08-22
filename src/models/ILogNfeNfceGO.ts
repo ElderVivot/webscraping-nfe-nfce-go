@@ -17,5 +17,8 @@ export default interface ILogNfeNfceGO {
     messageError?: string
     urlImageDown?: string
     qtdNotesDown?: number
-    qtdTimesReprocessed?: number
+    qtdTimesReprocessed?: number,
+    qtdPagesTotal?: number,
+    pageInicial?: number,
+    pageFinal?: number
 }

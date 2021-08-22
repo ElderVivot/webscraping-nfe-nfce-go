@@ -1,7 +1,7 @@
 import { Page } from 'puppeteer'
 
 import { ISettingsNFeGoias } from './ISettingsNFeGoias'
-import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
+// import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
 
 export async function ClickOkDownloadFinish (page: Page, settings: ISettingsNFeGoias): Promise<void> {
     try {
@@ -15,7 +15,7 @@ export async function ClickOkDownloadFinish (page: Page, settings: ISettingsNFeG
         console.log(`\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
         console.log('\t-------------------------------------------------')
 
-        const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
-        await treatsMessageLog.saveLog()
+        // const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
+        // await treatsMessageLog.saveLog()
     }
 }

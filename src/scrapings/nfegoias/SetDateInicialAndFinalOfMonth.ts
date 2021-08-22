@@ -19,7 +19,7 @@ export async function SetDateInicialAndFinalOfMonth (page: Page, settings: ISett
         const yearFinal = periodToDown.dateEnd.getFullYear()
         const monthFinal = periodToDown.dateEnd.getMonth() + 1
 
-        if (settings.reprocessingFetchErrors) {
+        if (settings.reprocessingFetchErrorsOrProcessing) {
             initialDate = periodToDown.dateStart
             finalDate = periodToDown.dateEnd
         } else {

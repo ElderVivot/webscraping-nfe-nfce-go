@@ -67,7 +67,7 @@ export async function createFolderToSaveData (settings: ISettingsNFeGoias, folde
     const folderToSaveLog = path.resolve(__dirname, '..', '..', 'logs', 'goias', 'hourLog', 'numeroSerie', 'typeLog', 'nameCompanieWithCnpj', 'yearMonth')
     let folder = ''
 
-    if (settings.typeLog === 'success') {
+    if (settings.typeLog === 'success' || settings.typeLog === 'processing') {
         folder = mountFolder(settings, folderToSaveXMLs)
         if (folderRoutineAutomactic && settings.codeCompanie) {
             if (folderToSaveXMLsRotinaAutomatica) {

@@ -26,7 +26,10 @@ saveXMLsNFeNFCGO.on('failed', async (job, error) => {
         dateStartDown: settings.dateStartDown,
         dateEndDown: settings.dateEndDown,
         qtdNotesDown: settings.qtdNotes,
-        qtdTimesReprocessed: settings.qtdTimesReprocessed
+        qtdTimesReprocessed: settings.qtdTimesReprocessed,
+        qtdPagesTotal: settings.qtdPagesTotal,
+        pageInicial: settings.pageInicial,
+        pageFinal: settings.pageFinal
     })
 
     console.log('Job failed', `ID ${settings.id} | ${settings.codeCompanie} - ${settings.nameCompanie} - ${settings.cgceCompanie} | ${settings.modelNF} | ${settings.situacaoNFDescription} | ${settings.dateStartDown} - ${settings.dateEndDown}`)
@@ -39,7 +42,7 @@ saveXMLsNFeNFCGO.on('completed', async (job) => {
         id: settings.id,
         wayCertificate: settings.wayCertificate,
         hourLog: settings.hourLog,
-        typeLog: 'success',
+        typeLog: settings.qtdPagesTotal === settings.pageFinal ? 'success' : 'processing',
         messageLog: 'SucessToSaveNotes',
         messageLogToShowUser: 'Notas salvas com sucesso',
         messageError: '',
@@ -52,7 +55,10 @@ saveXMLsNFeNFCGO.on('completed', async (job) => {
         dateStartDown: settings.dateStartDown,
         dateEndDown: settings.dateEndDown,
         qtdNotesDown: settings.qtdNotes,
-        qtdTimesReprocessed: settings.qtdTimesReprocessed
+        qtdTimesReprocessed: settings.qtdTimesReprocessed,
+        qtdPagesTotal: settings.qtdPagesTotal,
+        pageInicial: settings.pageInicial,
+        pageFinal: settings.pageFinal
     })
 })
 

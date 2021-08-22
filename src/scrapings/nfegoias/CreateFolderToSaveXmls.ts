@@ -17,6 +17,8 @@ export async function CreateFolderToSaveXmls (page: Page, settings: ISettingsNFe
             downloadPath: path.resolve(pathNote)
         })
     } catch (error) {
+        // when already processing before then dont save in database again because duplicate registry of scraping, only save is reprocessing
+        const saveInDB = settings.typeLog !== 'processing' || !!settings.id
         settings.typeLog = 'error'
         settings.messageLog = 'CreateFolderToSaveXmls'
         settings.messageError = error
@@ -28,6 +30,6 @@ export async function CreateFolderToSaveXmls (page: Page, settings: ISettingsNFe
         console.log('\t-------------------------------------------------')
 
         const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
-        await treatsMessageLog.saveLog()
+        await treatsMessageLog.saveLog(saveInDB)
     }
 }
