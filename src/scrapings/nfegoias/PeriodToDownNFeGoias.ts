@@ -14,7 +14,6 @@ const getDateStart = (/* datedownmax: any */): Date => {
 
 const getDateEnd = (): Date => {
     const dayFirstSearch = Number(process.env.DAY_FIRST_SEARCH) || 15
-    console.log(dayFirstSearch)
     const today = new Date()
     let dateEnd: Date
     const dayToday = today.getDate()
