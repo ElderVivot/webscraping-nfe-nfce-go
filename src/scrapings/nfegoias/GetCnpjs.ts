@@ -6,8 +6,7 @@ import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
 
 export async function GetCnpjs (page: Page, browser: Browser, settings: ISettingsNFeGoias): Promise<IOptionsCnpjsGoias[]> {
     try {
-        await page.waitForTimeout(2000)
-        // await page.waitFor(2000)
+        await page.waitForTimeout(1000)
         await page.waitForSelector('#cmpCnpj')
         return await page.evaluate(() => {
             const options: IOptionsCnpjsGoias[] = []

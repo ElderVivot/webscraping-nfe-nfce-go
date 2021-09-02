@@ -68,4 +68,17 @@ export const jobProcessing = new CronJob(
     true
 )
 
+export const jobToProcess = new CronJob(
+    '10 1 * * *',
+    async function () {
+        try {
+            await processNotes('to_process')
+        } catch (error) {
+            console.log(`- Erro ao reprocessar to_process: ${error}`)
+        }
+    },
+    null,
+    true
+)
+
 // processNotes('error').then(_ => console.log(_))

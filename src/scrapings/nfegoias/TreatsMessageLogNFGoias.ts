@@ -27,7 +27,7 @@ export class TreatsMessageLogNFeGoias {
         if (this.browser) await this.browser.close()
 
         if (saveInDB) {
-            if (this.settings.reprocessingFetchErrorsOrProcessing) { this.settings.qtdTimesReprocessed += 1 }
+            if (this.settings.typeLog === 'error') { this.settings.qtdTimesReprocessed += 1 }
 
             const saveLogNfeNfceGO = new SaveLogNfeNfceGO()
             await saveLogNfeNfceGO.saveLog({
@@ -36,7 +36,7 @@ export class TreatsMessageLogNFeGoias {
                 hourLog: this.settings.hourLog,
                 typeLog: this.settings.typeLog || 'error',
                 messageLog: this.settings.messageLog || '',
-                messageError: this.settings.messageError,
+                messageError: this.settings.messageError.toString(),
                 messageLogToShowUser: this.settings.messageLogToShowUser,
                 urlImageDown: '',
                 codeCompanie: this.settings.codeCompanie,
@@ -47,7 +47,7 @@ export class TreatsMessageLogNFeGoias {
                 dateStartDown: this.settings.dateStartDown,
                 dateEndDown: this.settings.dateEndDown,
                 qtdNotesDown: this.settings.qtdNotes,
-                qtdTimesReprocessed: this.settings.qtdTimesReprocessed,
+                qtdTimesReprocessed: this.settings.qtdTimesReprocessed || 0,
                 qtdPagesTotal: this.settings.qtdPagesTotal,
                 pageInicial: this.settings.pageInicial,
                 pageFinal: this.settings.pageFinal

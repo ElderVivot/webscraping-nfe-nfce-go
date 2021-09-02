@@ -2,7 +2,7 @@ import { format } from 'date-fns-tz'
 import path from 'path'
 
 import 'dotenv/config'
-import { scrapingNotes } from '../../queues/lib/ScrapingNotes'
+import { scrapingNotesFirstProcessing } from '../../queues/lib/ScrapingNotesFirstProcessing'
 import { OrganizeCertificates } from '../../services/certificates/organize-certificates'
 import { listFiles } from '../../utils/get-list-files-of-folder'
 import { ISettingsNFeGoias } from './ISettingsNFeGoias'
@@ -28,7 +28,7 @@ class Applicattion {
                     hourLog: this.hourLog,
                     dateHourProcessing: this.hourLogToCreateFolder
                 }
-                await scrapingNotes.add({
+                await scrapingNotesFirstProcessing.add({
                     settings
                 })
                 console.log(`*- Certificado ${fileCertificate} adicionado na fila`)

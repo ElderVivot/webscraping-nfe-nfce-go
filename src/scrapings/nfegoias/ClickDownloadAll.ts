@@ -5,8 +5,7 @@ import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
 
 export async function ClickDownloadAll (page: Page, settings: ISettingsNFeGoias): Promise<void> {
     try {
-        await page.waitForTimeout(4000)
-        // await page.waitFor(2000)
+        await page.waitForTimeout(2000)
         await page.waitForSelector('.btn-download-all')
         await page.click('.btn-download-all')
     } catch (error) {

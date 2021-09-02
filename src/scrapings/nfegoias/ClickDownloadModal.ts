@@ -26,17 +26,12 @@ import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
 
 export async function ClickDownloadModal (page: Page, settings: ISettingsNFeGoias): Promise<number> {
     try {
-        await page.waitForTimeout(4000)
+        await page.waitForTimeout(2000)
         await page.waitForSelector('#dnwld-all-btn-ok')
-        // await page.click('#cmpPagTds')
         await page.click('#cmpPagPer')
         await page.type('#cmpPagIni', String(settings.pageInicial))
         await page.type('#cmpPagFin', String(settings.pageFinal))
-        // const isDisabled = await checkIsDisabled(page)
-        // if (isDisabled) throw 'MORE_10000_NOTES_TO_DOWN'
-        // const qtdNotes = await getQtdNotes(page)
         await page.click('#dnwld-all-btn-ok')
-        // return qtdNotes
     } catch (error) {
         // when already processing before then dont save in database again because duplicate registry of scraping, only save is reprocessing
         const saveInDB = settings.typeLog !== 'processing' || !!settings.id
