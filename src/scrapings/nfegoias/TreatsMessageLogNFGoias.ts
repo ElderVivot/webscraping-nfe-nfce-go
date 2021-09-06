@@ -36,7 +36,7 @@ export class TreatsMessageLogNFeGoias {
                 hourLog: this.settings.hourLog,
                 typeLog: this.settings.typeLog || 'error',
                 messageLog: this.settings.messageLog || '',
-                messageError: this.settings.messageError.toString(),
+                messageError: this.settings.messageError?.toString() || this.settings.messageError,
                 messageLogToShowUser: this.settings.messageLogToShowUser,
                 urlImageDown: '',
                 codeCompanie: this.settings.codeCompanie,

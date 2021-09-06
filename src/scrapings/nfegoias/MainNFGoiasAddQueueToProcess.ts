@@ -102,7 +102,9 @@ export async function MainNFGoiasAddQueueToProcess (settings: ISettingsNFeGoias 
                                     settings = await CheckIfCompanieIsValid(page, settings)
                                     await page.goto(urlActual)
 
+                                    console.log('\t9- Salvando registro pra processamento futuro.')
                                     settings.typeLog = 'to_process'
+                                    settings.messageLogToShowUser = 'A Processar'
                                     const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
                                     await treatsMessageLog.saveLog()
 

@@ -2,6 +2,7 @@ import TTypeLog from '../../models/TTypeLog'
 
 export interface ISettingsNFeGoias {
     wayCertificate?: string,
+    dataCertificate?: Buffer,
     password?: string,
     numeroSerie?: string,
     dateHourProcessing?: string,
