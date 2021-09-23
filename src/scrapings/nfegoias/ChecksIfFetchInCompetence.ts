@@ -59,6 +59,7 @@ export async function ChecksIfFetchInCompetence (page: Page, settings: ISettings
         if (error === 'PERIOD_ALREADY_PROCESSED_SUCCESS_OR_WARNING') {
             settings.typeLog = 'warning'
             settings.messageLogToShowUser = 'Período que apresentou erro na consulta, já processado e foi realizada com sucesso'
+            saveInDB = true
         }
         console.log(`\t[Final-Empresa-Mes] - ${settings.messageLogToShowUser}`)
         console.log('\t-------------------------------------------------')
