@@ -207,6 +207,8 @@ export async function MainNFGoias (settings: ISettingsNFeGoias = {}): Promise<vo
                                     await ClickOkDownloadFinish(page, settings)
                                     settings.pageInicial = 0
                                     settings.pageFinal = 0
+                                    settings.qtdPagesTotal = 0
+                                    settings.qtdNotes = 0
 
                                     console.log('\t[Final-Empresa-Mes]')
                                     console.log('\t-------------------------------------------------')
