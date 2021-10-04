@@ -1,8 +1,10 @@
 import 'dotenv/config'
 import { subMonths } from 'date-fns'
+import { zonedTimeToUtc } from 'date-fns-tz'
 import { Page } from 'puppeteer'
 
 import IPeriodToDownNotes from '../../models/IPeriodToDownNotes'
+import * as functions from '../../utils/functions'
 import { ISettingsNFeGoias } from './ISettingsNFeGoias'
 import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
 
@@ -33,6 +35,9 @@ export async function PeriodToDownNFeGoias (page: Page, settings: ISettingsNFeGo
         const dateStart = getDateStart()
         const dateEnd = getDateEnd()
 
+        settings.dateStartDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateStart, 'America/Sao_Paulo')))} 03:00:00 AM`
+        settings.dateEndDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateEnd, 'America/Sao_Paulo')))} 03:00:00 AM`
+
         if (dateStart >= dateEnd) {
             throw 'DONT_HAVE_NEW_PERIOD_TO_PROCESS'
         }
@@ -41,11 +46,13 @@ export async function PeriodToDownNFeGoias (page: Page, settings: ISettingsNFeGo
             dateStart, dateEnd
         }
     } catch (error) {
+        let saveInDB = true
         settings.typeLog = 'error'
         settings.messageLog = 'PeriodToDownNFeGoias'
         settings.messageError = error
         settings.messageLogToShowUser = 'Erro ao verificar o período pra baixar.'
         if (error === 'DONT_HAVE_NEW_PERIOD_TO_PROCESS') {
+            saveInDB = false
             settings.typeLog = 'warning'
             settings.messageLogToShowUser = 'Não há um novo período pra processar, ou seja, o último processamento já buscou o período máximo.'
         }
@@ -53,6 +60,6 @@ export async function PeriodToDownNFeGoias (page: Page, settings: ISettingsNFeGo
         console.log('\t-------------------------------------------------')
 
         const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, null, true)
-        await treatsMessageLog.saveLog()
+        await treatsMessageLog.saveLog(saveInDB)
     }
 }
