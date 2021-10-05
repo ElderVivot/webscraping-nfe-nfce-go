@@ -47,7 +47,7 @@ export const LoguinCertificadoInterceptRequest = async (page: Page, browser: Bro
 
         settings.password = password
         settings.dataCertificate = fs.readFileSync(settings.wayCertificate)
-        await page.goto('https://nfe.sefaz.go.gov.br/nfeweb/sites/nfe/consulta-publica/principal')
+        await page.goto('https://nfe.sefaz.go.gov.br/nfeweb/sites/nfe/consulta-publica/principal', { timeout: 180000 })
         await page.setRequestInterception(true)
         page.on('request', async intercept => await interceptRequest(intercept, settings))
         await page.waitForTimeout(3000)
