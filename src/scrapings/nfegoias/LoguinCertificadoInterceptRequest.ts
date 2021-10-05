@@ -61,7 +61,8 @@ export const LoguinCertificadoInterceptRequest = async (page: Page, browser: Bro
         console.log('-------------------------------------------------')
 
         const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, browser)
-        await treatsMessageLog.saveLog()
+        // dont save in database because dont have information necessary to reprocess
+        await treatsMessageLog.saveLog(false)
     }
 }
 
