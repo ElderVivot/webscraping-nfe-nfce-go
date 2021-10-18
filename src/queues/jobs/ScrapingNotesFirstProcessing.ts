@@ -1,8 +1,8 @@
 import 'dotenv/config'
-import { prepareCertificateRegedit } from 'src/services/certificates/windows/prepare-certificate-regedit'
 
 import { ISettingsNFeGoias } from '../../scrapings/nfegoias/ISettingsNFeGoias'
 import { MainNFGoiasAddQueueToProcess } from '../../scrapings/nfegoias/MainNFGoiasAddQueueToProcess'
+import { prepareCertificateRegedit } from '../../services/certificates/windows/prepare-certificate-regedit'
 
 export const ScrapingNotesFirstProcessing = {
     key: 'ScrapingNotesFirstProcessing',
