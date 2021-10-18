@@ -9,7 +9,8 @@ import { CheckIfCompanieIsValid } from './CheckIfCompanieIsValid'
 import { ChecksIfFetchInCompetence } from './ChecksIfFetchInCompetence'
 import { GetCnpjs } from './GetCnpjs'
 import { ISettingsNFeGoias } from './ISettingsNFeGoias'
-import { LoguinCertificadoInterceptRequest } from './LoguinCertificadoInterceptRequest'
+// import { LoguinCertificadoInterceptRequest } from './LoguinCertificadoInterceptRequest'
+import { LoguinCertificado } from './LoguinCertificado'
 import { PeriodToDownNFeGoias } from './PeriodToDownNFeGoias'
 import { SetDateInicialAndFinalOfMonth } from './SetDateInicialAndFinalOfMonth'
 import { TreatsMessageLogNFeGoias } from './TreatsMessageLogNFGoias'
@@ -45,7 +46,7 @@ export async function MainNFGoiasAddQueueToProcess (settings: ISettingsNFeGoias 
         await page.setViewport({ width: 0, height: 0 })
 
         console.log('2- Fazendo loguin com certificado')
-        await LoguinCertificadoInterceptRequest(page, browser, settings)
+        await LoguinCertificado(page, browser, settings)
 
         console.log('3- Pegando relação de CNPS que este certificado tem acesso')
         const optionsCnpjs = await GetCnpjs(page, browser, settings)

@@ -28,6 +28,7 @@ export async function GetCnpjs (page: Page, browser: Browser, settings: ISetting
         console.log('-------------------------------------------------')
 
         const treatsMessageLog = new TreatsMessageLogNFeGoias(page, settings, browser)
-        await treatsMessageLog.saveLog()
+        // dont save in database because dont have information necessary to reprocess
+        await treatsMessageLog.saveLog(false)
     }
 }
