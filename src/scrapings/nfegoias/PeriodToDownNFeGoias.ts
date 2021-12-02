@@ -14,7 +14,7 @@ const getDateStart = (/* datedownmax: any */): Date => {
     return dateStart
 }
 
-const getDateEnd = (): Date => {
+const getDateEnd = (situacaoNF = '2'): Date => {
     const dayFirstSearch = Number(process.env.DAY_FIRST_SEARCH) || 15
     const today = new Date()
     let dateEnd: Date
@@ -27,13 +27,31 @@ const getDateEnd = (): Date => {
         dateEnd = today
         dateEnd.setDate(dayFirstSearch)
     }
+
+    // canceladas --> testing better and so implement, this code above is example that I think is correct
+    // if (situacaoNF === '3') {
+    //     if (dayToday === 1) {
+    //         dateEnd = new Date(today.getFullYear(), today.getMonth() - 1, dayFirstSearch)
+    //     } else if (dayToday >= 2 && dayToday <= dayFirstSearch + 1) {
+    //         dateEnd = new Date(today.getFullYear(), today.getMonth(), 0)
+    //     } else { // dayToday >= dayFirstSearch+2 && dayToday <= last day of month
+    //         dateEnd = today
+    //         dateEnd.setDate(dayFirstSearch)
+    //     }
+    // } else {
+    //     if (dayToday >= 1 && dayToday <= dayFirstSearch) {
+    //         dateEnd = new Date(today.getFullYear(), today.getMonth(), 0)
+    //     } else {
+    //         dateEnd = new Date(today.getFullYear(), today.getMonth() - 1, dayFirstSearch)
+    //     }
+    // }
     return dateEnd
 }
 
 export async function PeriodToDownNFeGoias (page: Page, settings: ISettingsNFeGoias): Promise<IPeriodToDownNotes> {
     try {
         const dateStart = getDateStart()
-        const dateEnd = getDateEnd()
+        const dateEnd = getDateEnd(settings.situacaoNF)
 
         settings.dateStartDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateStart, 'America/Sao_Paulo')))} 03:00:00 AM`
         settings.dateEndDown = `${functions.convertDateToString(new Date(zonedTimeToUtc(dateEnd, 'America/Sao_Paulo')))} 03:00:00 AM`
