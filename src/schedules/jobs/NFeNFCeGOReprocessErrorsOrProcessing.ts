@@ -30,8 +30,15 @@ async function processNotes (typeLog: TTypeLog) {
                     pageInicial: log.pageInicial,
                     pageFinal: log.pageFinal
                 }
+
+                const jobId = `${log.id}_${log.cgceCompanie}_${log.modelNF}_${log.situacaoNF}`
+                const job = await scrapingNotes.getJob(jobId)
+                if (job?.finishedOn) await job.remove()
+
                 await scrapingNotes.add({
                     settings
+                }, {
+                    jobId
                 })
 
                 console.log(`*- Reprocessando scraping ${settings.id} referente ao certificado ${settings.wayCertificate} modelo periodo ${settings.dateStartDown} a ${settings.dateEndDown} modelo ${settings.modelNF}`)
